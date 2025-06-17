@@ -146,7 +146,10 @@ $filtro_busca = isset($_GET['busca']) ? sanitizar($_GET['busca']) : '';
 // Construir cláusula WHERE para filtros
 $where_clauses = ["1=1"]; // Sempre verdadeiro para iniciar
 
-
+//Quando for a visualização por cards
+//Deve exibir as tarefas que não sejam concluídas
+//Na visualização por tabelas, exibe tudo
+//Jaime Pimenta - 16/06
 if ($modo_visualizacao === 'cards'){
 	if ($filtro_status) {
 		$where_clauses[] = "t.status = '$filtro_status'";

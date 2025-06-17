@@ -48,6 +48,9 @@ $conn->begin_transaction();
 
 try {
     // Atualizar o registro de rastreamento
+	//A rotina faz o update na tabela de rastreamento
+	//Depois faz os elect na tabela de tarefas e atualiza o Tempo
+	//Jaime Pimenta - 17/06
    
     if ($finalizar) {
 		$data_hora_fim = date('Y-m-d H:i:s');
