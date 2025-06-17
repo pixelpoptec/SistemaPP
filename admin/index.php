@@ -51,6 +51,7 @@ verificaPermissao('dashboard');
 						<a href="pages/precificacao.php" class="btn btn-primary">Precificação</a>
                         <a href="pages/tarefas.php" class="btn btn-success">Tarefas</a>
                         <a href="pages/clientes.php" class="btn btn-info">Cliente</a>
+						<a href="config/webhook.php" class="btn btn-info">GitHub</a>
                     </div>
                 </div>
             </main>
