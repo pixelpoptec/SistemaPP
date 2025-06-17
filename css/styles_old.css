@@ -1,0 +1,577 @@
+/* 
+* Folha de estilos para o site da Pixel Pop
+* Criado em: Maio de 2025
+* Autor: Jaime Pimenta
+*/
+
+/* ===== ESTILOS ADICIONADOS ===== */
+.centralizar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0; /* Substituir height:100vh por padding adequado */
+}
+
+.imagem-logo {
+    max-width: 220px;
+    height: auto;
+    display: block;
+}
+
+/* ===== ESTILOS ADICIONADOS ===== */
+
+/* ===== RESET E ESTILOS BÁSICOS ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #fff6eb;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+section {
+    padding: 60px 0;
+}
+
+/* ===== CABEÇALHO ===== */
+.header {
+    background-color: #6b705c; 
+    color: #f1e3d3;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo {
+    height: 40px; /* Ajuste conforme necessário */
+    width: auto;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+
+.logo a {
+    font-size: 24px;
+    font-weight: 700;
+    color: #f1e3d3;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.nav-menu {
+    display: flex;
+}
+
+.nav-menu li {
+    margin-left: 25px;
+}
+
+.nav-menu a {
+    color: #fff6eb;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #c58c6d;
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: #fff6eb;
+    margin: 2px 0;
+    transition: all 0.3s;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    background-color: #6b705c;
+    color: #fff6eb;
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    background-image: linear-gradient(rgba(107, 112, 92, 0.5), rgba(107, 112, 92, 0.3)), url('https://via.placeholder.com/1600x800');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero .slogan {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    font-weight: 300;
+}
+
+.hero-logo {
+    height: 250px; /* Ajuste conforme necessário */
+    width: auto;
+    margin-right: 10px;
+    vertical-align: middle;
+	text-align: center;
+}
+
+/* Adicione um espaçamento específico para o botão */
+.hero .btn {
+    margin: 0; /* Remove margens padrão */
+}
+
+.hero-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.banner {
+    height: 195px; /* Altura fixa proporcional */
+    background-image: url('../img/banner-cubo-v4.png');
+    background-size: contain; /* Alterado para 'contain' para não cortar a imagem */
+    background-position: center;
+    background-repeat: no-repeat; /* Evita repetição */
+    margin: 10px; /* Remove margens padrão */
+}
+
+.hero .btn {
+    margin: 0;
+}
+
+/* ===== SOBRE ===== */
+.sobre {
+    background-color: #fff6eb;
+}
+
+.sobre h2, .servicos h2, .projetos h2, .contato h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #6b705c;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.texto, .imagem {
+    flex: 1;
+}
+
+.texto p {
+    margin-bottom: 15px;
+}
+
+/* ===== SERVIÇOS ===== */
+.servicos {
+    background-color: #f1e3d3;
+}
+
+.servicos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.servico-card {
+    background-color: #fff6eb;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.servico-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.servico-card .icon {
+    font-size: 48px;
+    color: #6b705c;
+    margin-bottom: 20px;
+}
+
+.servico-card h3 {
+    margin-bottom: 15px;
+    color: #6b705c;
+}
+
+/* ===== PROJETOS ===== */
+.projetos {
+    background-color: #fff6eb;
+}
+
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.projeto-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    height: 200px;
+}
+
+.projeto-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.projeto-item:hover img {
+    transform: scale(1.1);
+}
+
+.projeto-item .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(135, 183, 164, 0.8);
+    color: #fff6eb;
+    padding: 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+}
+
+.projeto-item:hover .overlay {
+    transform: translateY(0);
+}
+
+.projeto-item h3 {
+    margin-bottom: 5px;
+}
+
+/* ===== CONTATO ===== */
+.contato {
+    background-color: #f1e3d3;
+}
+
+.formulario, .info-contato {
+    flex: 1;
+	padding-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+.info-contato {
+    background-color: #6b705c;
+    color: #fff6eb;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.info-contato h3 {
+    margin-bottom: 20px;
+}
+
+.info-contato p {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.info-contato i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.redes-sociais {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.social-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background-color: #6b705c;
+    color: #fff6eb;
+    padding: 20px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    /* margin-bottom: 40px; */
+}
+
+.footer-logo {
+    height: 20px; /* Ajuste conforme necessário */
+	width: auto;
+	margin-right: 10px;
+}
+
+.footer-links ul li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #ccc;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-newsletter form {
+    display: flex;
+    margin-top: 15px;
+}
+
+.footer-newsletter input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.footer-newsletter button {
+    padding: 10px 15px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.footer-newsletter button:hover {
+    background-color: #003d82;
+}
+
+.footer-bottom {
+    text-align: center;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 992px) {
+    .flex-container {
+        flex-direction: column;
+    }
+    
+	.imagem {
+        order: -1; /* Coloca a imagem antes do texto em telas menores */
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero .slogan {
+        font-size: 1.25rem;
+    }
+	
+	.formulario, .info-contato {
+		padding-bottom: 25px;
+	}
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        right: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: #6b705c;
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+    }
+    
+    .nav-menu.active {
+        right: 0;
+    }
+    
+    .nav-menu li {
+        margin: 10px 0;
+    }
+    
+    .hero {
+        padding: 80px 0;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero .slogan {
+        font-size: 1.1rem;
+    }
+	
+	.formulario, .info-contato {
+		padding-bottom: 25px;
+	}	
+    
+    .galeria {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    section {
+        padding: 40px 0;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-newsletter form {
+        flex-direction: column;
+    }
+    
+    .footer-newsletter input, 
+    .footer-newsletter button {
+        width: 100%;
+        border-radius: 4px;
+    }
+    
+    .footer-newsletter button {
+        margin-top: 10px;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+	
+	.formulario, .info-contato {
+		padding-bottom: 25px;
+	}	
+    
+    .hero .slogan {
+        font-size: 1rem;
+    }
+}
+
+/* Estilos para alertas */
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}

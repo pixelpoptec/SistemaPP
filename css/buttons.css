@@ -1,0 +1,63 @@
+/* Estilo base para os botões */
+.btn {
+  /* Dimensões e espaçamento */
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 8px;
+  
+  /* Estilo de cantos e bordas */
+  border-radius: 50px; /* Raio dos cantos arredondados */
+  border: 1px solid #e0e0e0;
+  
+  /* Cores */
+  background-color: #fff6eb;
+  color: #6b705c; /* Azul similar ao Google */
+  
+  /* Tipografia */
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  
+  /* Sombra suave */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  /* Transição suave para efeitos hover */
+  transition: all 0.3s ease;
+  
+  /* Cursor estilo mão ao passar por cima */
+  cursor: pointer;
+}
+
+/* Efeito hover */
+.btn:hover {
+  /* Sombra ligeiramente mais pronunciada */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  
+  /* Cor do texto um pouco mais escura */
+  background-color: #6b705c;
+  color: #fff6eb;
+  
+  /* Leve aumento de escala para efeito visual */
+  transform: translateY(-1px);
+}
+
+/* Efeito ao clicar */
+.btn:active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+  color: #6b705c;
+}
+
+/* Variante de tamanho pequeno */
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Variante de tamanho grande */
+.btn-large {
+  padding: 12px 24px;
+  font-size: 16px;
+}

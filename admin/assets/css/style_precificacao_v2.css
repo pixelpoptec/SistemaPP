@@ -1,0 +1,156 @@
+body {
+    padding-top: 20px;
+    background-color: #fff6eb; /* Alterado para uma cor da paleta */
+    color: #000000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.card-header {
+    background-color: #ddbea9;
+    color: #000000;
+    font-weight: 600;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.bg-calculo {
+    background-color: #6b705c;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.bg-resultado {
+    background-color: #87b7a4;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.result-box {
+    background-color: #f1e3d3;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border-left: 4px solid #c58c6d;
+}
+
+.price-highlight {
+    font-size: 24px;
+    font-weight: bold;
+    color: #6b705c; /* Alterado para uma cor da paleta */
+}
+
+.cost-highlight {
+    font-size: 18px;
+    color: #c58c6d; /* Alterado para uma cor da paleta */
+}
+
+.profit-highlight {
+    font-size: 18px;
+    color: #87b7a4; /* Alterado para uma cor da paleta */
+}
+
+.btn-primary {
+    background-color: #c58c6d;
+    border-color: #c58c6d;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #ddbea9;
+    border-color: #ddbea9;
+    color: #000000;
+}
+
+/* Adições para melhorar a aparência geral */
+.form-control:focus {
+    border-color: #87b7a4;
+    box-shadow: 0 0 0 0.2rem rgba(135, 183, 164, 0.25);
+}
+
+.form-label {
+    color: #6b705c;
+    font-weight: 600;
+}
+
+.input-group-text {
+    background-color: #f1e3d3;
+    border-color: #ddbea9;
+    color: #6b705c;
+}
+
+.table {
+    color: #000000;
+}
+
+.table thead th {
+    background-color: #ddbea9;
+    color: #6b705c;
+    border-color: #c58c6d;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(241, 227, 211, 0.3);
+}
+
+.card-footer {
+    background-color: #f1e3d3;
+    border-top: none;
+    border-radius: 0 0 8px 8px !important;
+}
+
+.alert-info {
+    background-color: #87b7a4;
+    border-color: #87b7a4;
+    color: #ffffff;
+}
+
+.alert-warning {
+    background-color: #ddbea9;
+    border-color: #c58c6d;
+    color: #6b705c;
+}
+
+/* Botão secundário para opções adicionais */
+.btn-secondary {
+    background-color: #87b7a4;
+    border-color: #87b7a4;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #6b705c;
+    border-color: #6b705c;
+}
+
+/* Estilo para inputs desabilitados */
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: #f1e3d3;
+    border-color: #ddbea9;
+    color: #6b705c;
+}
+
+/* Customização para pequenos rótulos */
+small, .small {
+    color: #6b705c;
+}
+
+/* Customização para rodapé da aplicação */
+.footer {
+    background-color: #f1e3d3;
+    padding: 15px 0;
+    margin-top: 30px;
+    text-align: center;
+    color: #6b705c;
+}
