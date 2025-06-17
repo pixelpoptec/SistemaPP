@@ -1,7 +1,6 @@
 <?php
 require_once '../config/auth.php';
 
-// Verificar se o usuário está logado
 verificaLogin();
 
 // Inicializar variáveis
