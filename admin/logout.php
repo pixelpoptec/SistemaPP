@@ -5,5 +5,5 @@ require_once 'config/auth.php';
 fazerLogout();
 
 // Redirecionar para a página de login
-header('Location: login.php?logout=success');
+header('Location: login.php');
 exit();

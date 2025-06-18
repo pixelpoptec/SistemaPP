@@ -126,6 +126,14 @@ body {
     color: #6b705c;
 }
 
+.aside-logo {
+    height: 40px;
+    width: auto;
+    margin-right: 10px;
+	margin-left: 15px;
+    vertical-align: middle;
+}
+
 /* Conteúdo principal */
 main {
     flex: 1;
@@ -644,3 +652,241 @@ tr.status-row-aberto td:first-child {
         font-size: 0.9rem;
     }
 }
+
+/****************************************/
+/* INICIO
+/* CSS para Sidebar Responsiva */
+/* Jaime Pimenta - 17/06/2025 */
+/****************************************/
+
+/* Variáveis de cores baseadas nas cores fornecidas */
+:root {
+    --primary-dark: #6b705c;
+    --primary-medium: #87b7a4;
+    --accent-dark: #c58c6d;
+    --accent-medium: #ddbea9;
+    --accent-light: #f1e3d3;
+    --background-light: #fff6eb;
+    --black: #000000;
+    --white: #ffffff;
+    --transition-speed: 0.3s;
+}
+
+/* Estilos base para a sidebar */
+.sidebar {
+    background-color: var(--primary-dark);
+    color: var(--white);
+    width: 250px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    padding-top: 20px; /* Espaço para o header fixo */
+    overflow-y: auto;
+    transition: transform var(--transition-speed) ease;
+    z-index: 1000;
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar nav li {
+    margin-bottom: 10px;
+}
+
+.sidebar nav a {
+    color: var(--white);
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar nav a:hover, 
+.sidebar nav a:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+.sidebar nav a:active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-header {
+    display: none;
+}
+
+/* Estilos para o botão toggle da sidebar */
+.sidebar-toggle-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.hamburger-icon {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--primary-dark);
+    position: relative;
+    transition: background-color var(--transition-speed);
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 3px;
+    background-color: var(--primary-dark);
+    transition: transform var(--transition-speed);
+}
+
+.hamburger-icon::before {
+    top: -8px;
+}
+
+.hamburger-icon::after {
+    top: 8px;
+}
+
+/* Estilo para o botão quando o menu está aberto */
+.menu-open .hamburger-icon {
+    background-color: transparent;
+}
+
+.menu-open .hamburger-icon::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+
+.menu-open .hamburger-icon::after {
+    transform: rotate(-45deg);
+    top: 0;
+}
+
+/* Botão de fechar dentro da sidebar (apenas mobile) */
+.sidebar-close-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.close-icon {
+    font-weight: bold;
+}
+
+/* Backdrop para fechar o menu quando clicado fora */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+/* Ajustes para o layout principal */
+.content {
+    display: flex;
+    flex-direction: row;
+}
+
+main {
+    flex: 1;
+    margin-left: 250px; /* Mesma largura da sidebar */
+    padding: 1rem;
+    transition: margin-left var(--transition-speed) ease;
+}
+
+/* Media queries para responsividade */
+@media screen and (max-width: 768px) {
+    /* Ocultar sidebar por padrão */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    /* Mostrar botão toggle */
+    .sidebar-toggle-btn {
+        display: block;
+    }
+    
+    /* Mostrar botão de fechar dentro da sidebar */
+    .sidebar-header {
+        display: block;
+        height: 40px;
+        position: relative;
+        margin-bottom: 15px;
+    }
+    
+    .sidebar-close-btn {
+        display: block;
+    }
+    
+    /* Ajustar o conteúdo principal */
+    main {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* Quando a sidebar está aberta */
+    body.sidebar-active .sidebar {
+        transform: translateX(0);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.sidebar-active .sidebar-backdrop {
+        display: block;
+        opacity: 1;
+    }
+    
+    /* Garantir que o header não seja coberto pela sidebar */
+    .sidebar {
+        padding-top: 60px;
+    }
+}
+
+/* Melhoria para acessibilidade - foco visível */
+.sidebar a:focus,
+.sidebar-toggle-btn:focus,
+.sidebar-close-btn:focus {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
+
+/* Para dispositivos de tela pequena em modo retrato */
+@media screen and (max-width: 480px) {
+    .sidebar {
+        width: 85%;
+        max-width: 300px;
+    }
+}
+
+
+/****************************************/
+/* FINAL
+/* CSS para Sidebar Responsiva */
+/* Jaime Pimenta - 17/06/2025 */
+/****************************************/

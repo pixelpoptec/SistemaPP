@@ -44,5 +44,6 @@ verificaPermissao('admin_panel');
     </div>
     
     <script src="../assets/js/script.js"></script>
+	<script src="../assets/js/sidebar.js"></script>
 </body>
 </html>
