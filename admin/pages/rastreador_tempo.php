@@ -163,7 +163,7 @@ while ($row = $result->fetch_assoc()) {
                 <select class="form-select" id="tarefa" required>
                     <option value="">Escolha uma tarefa</option>
                     <?php foreach ($tarefas as $tarefa): ?>
-                        <option value="<?= $tarefa['id'] ?>"><?= htmlspecialchars($tarefa['nome']) ?></option>
+                        <option value="<?= $tarefa['id'] ?>"><?= sprintf("%03d", $tarefa['id']) . " | " . htmlspecialchars($tarefa['nome']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

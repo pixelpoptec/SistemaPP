@@ -216,154 +216,8 @@ while ($cliente = $result_clientes->fetch_assoc()) {
     <title>Controle de Tarefas - Sistema de Acesso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="../assets/css/style_tarefas.css">
 	<link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        .tarefa-card {
-            border-left: 5px solid #ddbea9;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .tarefa-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .prioridade-baixa { border-left-color: #87b7a4; }
-        .prioridade-media { border-left-color: #ddbea9; }
-        .prioridade-alta { border-left-color: #c58c6d; }
-        .prioridade-urgente { border-left-color: #e74c3c; }
-        
-        .status-badge {
-            font-size: 0.8rem;
-            padding: 0.3rem 0.6rem;
-        }
-        
-        .status-aberta { background-color: #87b7a4; color: white; }
-        .status-fazendo { background-color: #c58c6d; color: white; }
-        .status-esperando { background-color: #ddbea9; color: #6b705c; }
-        .status-concluido { background-color: #6b705c; color: white; }
-        
-        .task-actions {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .filters {
-            background-color: #f1e3d3;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .data-vencida {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        
-        .view-toggle {
-            margin-bottom: 20px;
-        }
-        
-        .view-toggle .btn {
-            padding: 0.5rem 1rem;
-        }
-        
-        .view-toggle .btn.active {
-            background-color: #6b705c;
-            color: white;
-        }
-        
-        /* Estilos para a tabela responsiva */
-        .table-responsive {
-            margin-top: 20px;
-        }
-        
-        .table-tarefas thead th {
-            background-color: #6b705c;
-            color: white;
-            font-weight: 500;
-        }
-        
-        .table-tarefas tbody tr:hover {
-            background-color: rgba(241, 227, 211, 0.5);
-        }
-        
-        .table-tarefas .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        
-        .table-tarefas .status-aberta-dot { background-color: #87b7a4; }
-        .table-tarefas .status-fazendo-dot { background-color: #c58c6d; }
-        .table-tarefas .status-esperando-dot { background-color: #ddbea9; }
-        .table-tarefas .status-concluido-dot { background-color: #6b705c; }
-        
-        .truncate-text {
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-        }
-        
-        @media (max-width: 768px) {
-            .task-actions {
-                flex-direction: column;
-            }
-            
-            .task-actions .btn {
-                width: 100%;
-                margin-bottom: 5px;
-            }
-            
-            /* Tabela responsiva em dispositivos móveis */
-            .table-tarefas thead {
-                display: none;
-            }
-            
-            .table-tarefas, .table-tarefas tbody, .table-tarefas tr, .table-tarefas td {
-                display: block;
-                width: 100%;
-            }
-            
-            .table-tarefas tr {
-                margin-bottom: 15px;
-                border: 1px solid #ddbea9;
-                border-radius: 8px;
-                overflow: hidden;
-            }
-            
-            .table-tarefas td {
-                position: relative;
-                padding-left: 50%;
-                text-align: right;
-                border-bottom: 1px solid #f1e3d3;
-            }
-            
-            .table-tarefas td:last-child {
-                border-bottom: none;
-            }
-            
-            .table-tarefas td:before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0.75rem;
-                width: 45%;
-                padding-right: 10px;
-                text-align: left;
-                font-weight: bold;
-                color: #6b705c;
-            }
-            
-            .truncate-text {
-                max-width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -626,10 +480,10 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                         <?php else: ?>
                             <!-- Visualização em Tabela -->
                             <div class="table-responsive">
-                                <table class="table table-striped table-hover table-tarefas">
+                                <table class="table table-striped table-hover data-table table-tarefas">
                                     <thead>
                                         <tr>
-                                            <!--<th>ID</th>-->
+                                            <th>ID</th>
                                             <th>Nome</th>
                                             <!--<th>Descrição</th>-->
                                             <th>Cliente</th>
@@ -674,7 +528,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                                 : $tarefa['detalhes'];
                                             ?>
                                             <tr class="<?php echo $rowClass; ?>">
-                                                <!--<td data-label="ID:"><?php echo $tarefa['id']; ?></td>-->
+                                                <td data-label="ID:"><?php echo $tarefa['id']; ?></td>
                                                 <!--<td data-label="Nome:"><span class="truncate-text"><?php echo $tarefa['nome']; ?></span></td>-->
 												<td data-label="Descrição:" class="table-cell-tooltip" data-tooltip="<?php echo htmlspecialchars($tarefa['detalhes']); ?>">
 													<span class="truncate-text"><?php echo $tarefa['nome']; ?></span>
@@ -687,7 +541,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                                     <?php echo $vencida ? ' (!)' : ''; ?>
                                                 </td>
 												<td data-label="Conclusão:"><?php echo $tarefa['termino_efetivo'] ? date('d/m/Y', strtotime($tarefa['termino_efetivo'])) : ''; ?></td>
-												<td data-label="Hora:"><?php echo $tarefa['tempo_horas'] . 'h' . $tarefa['tempo_minutos'] . 'm'; ?></td>
+												<td data-label="Hora:"><?php echo sprintf("%02d", $tarefa['tempo_horas']) . 'h' . sprintf("%02d", $tarefa['tempo_minutos']) . 'm'; ?></td>
                                                 <td data-label="Status:">
                                                     <div><span class="status-indicator <?php echo $status_dot_class; ?>"></span> <?php echo $status_text; ?></div>
                                                 </td>
