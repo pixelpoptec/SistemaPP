@@ -639,6 +639,7 @@ tr.status-row-aberto td:first-child {
     
     .btn {
         padding: 0.7rem 1.2rem;
+		font-size: 0.8rem;
     }
     
     .form-group input, 

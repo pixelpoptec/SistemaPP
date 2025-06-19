@@ -8,7 +8,10 @@ $usuario_id = $_SESSION['usuario_id'];
 
 // Buscar tarefas disponíveis (não concluídas e não em espera)
 // Buscar tarefas não concluídas para o select
-$sql_tarefas = "SELECT id, nome FROM tarefas WHERE status != 'concluido' AND status != 'esperando' ORDER BY nome";
+// Apenas tarefas com status de fazendo é que podem ter o tempo rastreado
+// Porque, se estou rastreando o tempo as abertas precisam ser alteradas para fazendo
+// E as com status = 'esperando' não tem porque serem rastreadas, tem que mudar o status
+$sql_tarefas = "SELECT id, nome FROM tarefas WHERE status = 'fazendo' ORDER BY nome";
 $result_tarefas = $conn->query($sql_tarefas);
 $tarefas = [];
 
