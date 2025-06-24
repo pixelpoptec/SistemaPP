@@ -1,5 +1,6 @@
 <?php
 require_once 'config/auth.php';
+require_once 'config/functions.php';
 
 // Verificar se o usuário está logado
 verificaLogin();
@@ -25,6 +26,13 @@ verificaPermissao('dashboard');
             
             <main>
                 <h2>Dashboard</h2>
+				
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Hospedagem</h3>
+                        <p>Espaço livre: <strong><?php echo calcularEspacoLivre(); ?></strong></p>
+                    </div>					
+                </div>				
                 
                 <div class="dashboard-actions">
                     <h3>Acesso Rápido</h3>
@@ -32,7 +40,8 @@ verificaPermissao('dashboard');
                         <!--<?php if (in_array('Admin', $_SESSION['grupos'])): ?>-->
                         <!--<?php endif; ?>-->
                         
-                        <a href="pages/tarefas.php" class="btn btn-success">Tarefas</a>
+                        <a href="pages/tarefas_m.php" class="btn btn-success">Tarefas</a>
+						<a href="pages/precificacao.php" class="btn btn-primary">Precificação</a>
                     </div>
                 </div>
             </main>

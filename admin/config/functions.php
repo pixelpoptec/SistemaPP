@@ -83,3 +83,31 @@ function obterPermissoesUsuario($usuario_id) {
     
     return $permissoes;
 }
+
+//Função para calcular o espaço disponivel no servidor
+//O valor retornado é diferente do que esta no cpanel
+//Assim, peguei o valor padrão de 100GB, e o tamanho usado
+//No dia 24/06 que era de 0,2GB e fiz os calculos aproximados
+//Do que seria o espaço livre
+function calcularEspacoLivre() {
+    $caminho = '/'; //Diretório raiz do servidor
+	// Verifica o espaço total no diretório fornecido
+    $espacoTotal = (disk_total_space($caminho) / (1024 ** 3)) + 26.35;
+	//$espacoTotal = 107374182400 / (1024 ** 3);
+    // Verifica o espaço livre no diretório fornecido
+    $espacoLivre = disk_free_space($caminho) / (1024 ** 3) + 52.36;
+    // Calcula o espaço usado
+	$espacoUsado = $espacoTotal - ($espacoTotal - $espacoLivre);
+
+    // Converte o espaço usado de bytes para uma unidade legível
+/*     $unidades = ['B', 'KB', 'MB', 'GB', 'TB'];
+    $i = 2;
+
+    while ($espacoUsado >= 1024 && $i < count($unidades) - 1) {
+        $espacoUsado /= 1024;
+        $i++;
+    } */
+
+    //return round($espacoUsado, 2) . ' ' . $unidades[$i];
+	return round($espacoUsado, 1) . ' GB';
+}

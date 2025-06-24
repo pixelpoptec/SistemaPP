@@ -1,11 +1,15 @@
 <?php
 require_once 'config/auth.php';
+require_once 'config/functions.php';
 
 // Verificar se o usuário está logado
 verificaLogin();
 
 // Verificar se o usuário tem permissão para acessar o dashboard
 verificaPermissao('dashboard');
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -40,6 +44,11 @@ verificaPermissao('dashboard');
                             <?php endforeach; ?>
                         </ul>
                     </div>
+					
+                    <div class="stat-card">
+                        <h3>Hospedagem</h3>
+                        <p>Espaço livre: <strong><?php echo calcularEspacoLivre(); ?></strong></p>
+                    </div>					
                 </div>
                 
                 <div class="dashboard-actions">

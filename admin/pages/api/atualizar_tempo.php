@@ -130,6 +130,7 @@ try {
     $conn->rollback();
     $response['message'] = 'Erro ao atualizar tempo: ' . $e->getMessage();
 	
+	//Jaime Pimenta - 24/06
 	/*	$arquivo = 'arquivo_' . date('Ymd_His') . '.txt';;
 	$conteudo = $response['message'];
 	file_put_contents($arquivo, $conteudo);		*/

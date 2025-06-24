@@ -58,6 +58,112 @@ CREATE TABLE logs_acesso (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
 );
 
+-- Tabela de Clientes
+CREATE TABLE clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    telefone VARCHAR(20),
+    empresa VARCHAR(100),
+    endereco TEXT,
+    observacoes TEXT,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    usuario_id INT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabela de Tarefas
+CREATE TABLE tarefas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    detalhes TEXT,
+    status ENUM('aberta', 'fazendo', 'esperando', 'concluido') DEFAULT 'aberta',
+    data_abertura DATETIME DEFAULT CURRENT_TIMESTAMP,
+    previsao_termino DATE,
+    termino_efetivo DATETIME NULL,
+    tempo_horas INT DEFAULT 0,
+    tempo_minutos INT DEFAULT 0,
+    prioridade ENUM('baixa', 'media', 'alta', 'urgente') DEFAULT 'media',
+    cliente_id INT,
+    usuario_id INT,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+----------------------------------------------
+---- SISTEMA DE PRECIFICAÇÃO -----------------
+----------------------------------------------
+-- Tabela para configurações gerais
+CREATE TABLE configuracoes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    custo_fixo_mensal DECIMAL(10,2) NOT NULL,
+    dias_mes INT NOT NULL,
+    horas_dia INT NOT NULL,
+    perc_uso_impressora DECIMAL(5,2) NOT NULL,
+    markup DECIMAL(5,2) NOT NULL,
+    perc_falhas DECIMAL(5,2) NOT NULL,
+    imposto DECIMAL(5,2) NOT NULL,
+    tx_cartao DECIMAL(5,2) NOT NULL,
+    custo_anuncio DECIMAL(5,2) NOT NULL
+);
+
+-- Tabela para materiais
+CREATE TABLE materiais (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    custo_kg DECIMAL(10,2) NOT NULL
+);
+
+-- Tabela para impressoras
+CREATE TABLE impressoras (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    modelo VARCHAR(50) NOT NULL,
+    potencia_w INT NOT NULL,
+    custo_kw_h DECIMAL(10,2) NOT NULL,
+    valor_maquina DECIMAL(10,2) NOT NULL,
+    vida_util_horas INT NOT NULL
+);
+
+-- Tabela para acessórios e embalagens
+CREATE TABLE acessorios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    custo_un DECIMAL(10,2) NOT NULL
+);
+
+-- Tabela para histórico de precificações
+CREATE TABLE historico_precificacao (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+	titulo VARCHAR(100) DEFAULT 'ND',
+	qtd_pecas INT DEFAULT 1,
+    hora INT NOT NULL,
+    minuto INT NOT NULL,
+    peso_g DECIMAL(10,2) NOT NULL,
+    custo_producao DECIMAL(10,2) NOT NULL,
+    preco_consumidor DECIMAL(10,2) NOT NULL,
+    preco_lojista DECIMAL(10,2) NOT NULL,
+    lucro_padrao DECIMAL(10,2) NOT NULL,
+    lucro_liquido DECIMAL(10,2) NOT NULL,
+    data_calculo TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela do rastreamento do tempo
+CREATE TABLE tempo_rastreamento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tarefa_id INT NOT NULL,
+    tempo_horas INT DEFAULT 0,
+    tempo_minutos INT DEFAULT 0,
+    segundos_totais INT DEFAULT 0,
+    data_hora_inicio DATETIME,
+    data_hora_fim DATETIME NULL,
+    usuario_id INT NOT NULL,
+    observacoes TEXT,
+    FOREIGN KEY (tarefa_id) REFERENCES tarefas(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+--ALTER TABLE tempo_rastreamento ADD COLUMN segundos_totais INT NOT NULL DEFAULT 0 AFTER tempo_minutos;
+
 -- Inserir grupos iniciais
 INSERT INTO grupos (nome, descricao) VALUES 
 ('admin', 'Administradores do sistema'),

@@ -15,7 +15,9 @@
 	<hr>
     <nav>
         <ul>
-            <li><a href="/pp-files/admin/pages/tarefas.php">Controle de Tarefas</a></li>
+            <li><a href="/pp-files/admin/index_m.php">Dashboard</a></li>
+			<li><a href="/pp-files/admin/pages/tarefas_m.php">Controle de Tarefas</a></li>
+			<li><a href="/pp-files/admin/pages/precificacao.php">Precificação</a></li>
         </ul>
     </nav>
 </aside>

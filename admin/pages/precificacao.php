@@ -26,12 +26,12 @@ function getImpressora($conn) {
 }
 
 // Função para calcular o preço
-function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_uni, $acessorios_tot) {
+function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_uni, $acessorios_tot, $titulo) {
     // Buscar dados necessários
     $config = getConfiguracoes($conn);
     $material = getMaterial($conn);
     $impressora = getImpressora($conn);
-    
+	
     // Cálculos baseados na planilha
     $tempo_minutos = ($hora * 60) + $minuto;
     $tempo_horas = $tempo_minutos / 60;
@@ -72,13 +72,16 @@ function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_u
     // Valor total
     $valor_total = $preco_consumidor * $qtd_pecas;
     
-    // Salvar no histórico
-    $sql = "INSERT INTO historico_precificacao (hora, minuto, peso_g, custo_producao, preco_consumidor, preco_lojista, lucro_padrao, lucro_liquido) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iidddddd", $hora, $minuto, $peso_g, $custo_producao, $preco_consumidor, $preco_lojista, $lucro_padrao, $lucro_liquido);
-    $stmt->execute();
+    if ($titulo != "ND"){
+		// Salvar no histórico apenas se inserir um Título
+		//para não encher o BD de registros desnecessários
+		$sql = "INSERT INTO historico_precificacao (titulo, qtd_pecas, hora, minuto, peso_g, custo_producao, preco_consumidor, preco_lojista, lucro_padrao, lucro_liquido) 
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		
+		$stmt = $conn->prepare($sql);
+		$stmt->bind_param("siiidddddd", $titulo, $qtd_pecas, $hora, $minuto, $peso_g, $custo_producao, $preco_consumidor, $preco_lojista, $lucro_padrao, $lucro_liquido);
+		$stmt->execute();
+	}
     
     // Retornar resultados
     return [
@@ -107,8 +110,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qtd_pecas = intval($_POST['qtd_pecas']);
     $acessorios_uni = isset($_POST['acessorios_uni']) && !empty($_POST['acessorios_uni']) ? floatval($_POST['acessorios_uni']) : 0;
     $acessorios_tot = isset($_POST['acessorios_tot']) && !empty($_POST['acessorios_tot']) ? floatval($_POST['acessorios_tot']) : 0;
+	$titulo = isset($_POST['titulo']) && !empty($_POST['titulo']) ? (string)($_POST['titulo']) : "ND";
     
-    $resultado = calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_uni, $acessorios_tot);
+    $resultado = calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_uni, $acessorios_tot, $titulo);
 }
 ?>
 <!DOCTYPE html>
@@ -125,7 +129,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php include '../includes/header.php'; ?>
         
         <div class="content">
-            <?php include '../includes/sidebar.php'; ?>
+            <?php if (isMobile()): ?>
+				<?php include '../includes/sidebar_m.php'; ?>
+			<?php else: ?>
+				<?php include '../includes/sidebar.php'; ?>	
+            <?php endif; ?>
             
             <main>
                 <h2>Precificação 3D</h2>
@@ -158,7 +166,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-md-3">
                                 <label for="acessorios_tot" class="form-label">Acessórios (Conjunto)</label>
                                 <input type="number" step="0.01" class="form-control" id="acessorios_tot" name="acessorios_tot" min="0">
-                            </div>                                            
+                            </div>
+                            <div class="col-md-3">
+                                <label for="titulo" class="form-label">Título</label>
+                                <input type="string" class="form-control" id="titulo" name="titulo">
+                            </div> 							
                         </div>
                         <button type="submit" class="btn btn-primary">Calcular Preço</button>
                     </form>

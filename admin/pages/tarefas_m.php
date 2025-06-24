@@ -226,7 +226,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
         <?php include '../includes/header.php'; ?>
         
         <div class="content">
-			<!--<?php include '../includes/sidebar_m.php'; ?>-->
+			<?php include '../includes/sidebar_m.php'; ?>
             
             <main>
                 <h4>Controle de Tarefas</h4>
