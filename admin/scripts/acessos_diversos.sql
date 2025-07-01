@@ -18,6 +18,20 @@ select * from tarefas;
 update tempo_rastreamento set data_hora_fim = null where id = 11;
 select * from tempo_rastreamento;
 
+select * from historico_precificacao;
+ALTER TABLE historico_precificacao ADD COLUMN qtd_pecas INT NOT NULL DEFAULT 1 AFTER titulo;
+ALTER TABLE historico_precificacao ADD COLUMN titulo VARCHAR(100) DEFAULT 'ND' AFTER id;
+update historico_precificacao set titulo = 'ND' where id =3;
+
+SELECT table_schema AS "Database", 
+       ROUND(SUM(data_length + index_length) / (1024 * 1024 * 1024), 2) AS "Tamanho GB"
+FROM information_schema.tables 
+GROUP BY table_schema;
+
+SELECT table_schema AS "Database", 
+       ROUND(SUM(data_length + index_length) / (1024 * 1024), 2) AS "Tamanho MB"
+FROM information_schema.tables 
+GROUP BY table_schema;
 
 
 

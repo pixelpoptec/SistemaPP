@@ -161,6 +161,7 @@ main h5 {
     background-color: #c58c6d;
     color: #ffffff;
     padding: 1rem 2rem;
+	margin-left: 5rem;
     text-align: center;
     font-size: 0.9rem;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);

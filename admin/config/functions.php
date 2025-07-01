@@ -111,3 +111,4 @@ function calcularEspacoLivre() {
     //return round($espacoUsado, 2) . ' ' . $unidades[$i];
 	return round($espacoUsado, 1) . ' GB';
 }
+?>

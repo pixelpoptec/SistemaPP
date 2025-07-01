@@ -1,5 +1,7 @@
 <?php
+session_start();
 require_once '../config/auth.php';
+require_once '../config/functions_excel.php';
 
 verificaLogin();
 
@@ -134,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $erro = 'Erro ao atualizar status da tarefa: ' . $conn->error;
             }
         }
+
     }
 }
 
@@ -142,6 +145,11 @@ $filtro_status = isset($_GET['status']) ? sanitizar($_GET['status']) : '';
 $filtro_prioridade = isset($_GET['prioridade']) ? sanitizar($_GET['prioridade']) : '';
 $filtro_cliente = isset($_GET['cliente_id']) ? (int)$_GET['cliente_id'] : 0;
 $filtro_busca = isset($_GET['busca']) ? sanitizar($_GET['busca']) : '';
+
+$_SESSION['filtro_status'] = $filtro_status;
+$_SESSION['filtro_prioridade'] = $filtro_prioridade;
+$_SESSION['filtro_cliente'] = (int) $filtro_cliente;
+$_SESSION['filtro_busca'] = $filtro_busca;
 
 // Construir cláusula WHERE para filtros
 $where_clauses = ["1=1"]; // Sempre verdadeiro para iniciar
@@ -305,6 +313,14 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">Filtrar</button>
                             <a href="tarefas.php" class="btn btn-secondary">Limpar</a>
+							<?php if (!empty($tarefas)): ?>
+								<form method="post" action="">
+									<input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+									<input type="hidden" name="acao" value="excel">
+									<input type="hidden" name="tarefa" value="<?php echo $tarefa; ?>">
+									<button type="submit" name="exportar" value="1" class="btn btn-info">Exportar Excel</button>
+								</form>
+							<?php endif; ?>							
                         </div>
                     </form>
                 </div>
@@ -312,7 +328,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
 
                 
                 <div class="panel-section">
-                    <h5>Minhas Tarefas</h5>
+                    <h5>Minhas Tarefas | <strong><?php echo count($tarefas); ?></strong></h5>
                     
                     <?php if (empty($tarefas)): ?>
                         <div class="alert alert-info">Nenhuma tarefa encontrada. Adicione uma nova tarefa.</div>
