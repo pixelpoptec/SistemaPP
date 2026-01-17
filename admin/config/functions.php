@@ -111,4 +111,23 @@ function calcularEspacoLivre() {
     //return round($espacoUsado, 2) . ' ' . $unidades[$i];
 	return round($espacoUsado, 1) . ' GB';
 }
+
+/**
+ * Formata tamanho em bytes para uma unidade legível
+ * 
+ * @param int $bytes Tamanho em bytes
+ * @param int $precision Precisão decimal
+ * @return string Tamanho formatado
+ */
+function formatBytes($bytes, $precision = 2) {
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+
+    $bytes /= (1 << (10 * $pow));
+
+    return round($bytes, $precision) . ' ' . $units[$pow];
+}
 ?>

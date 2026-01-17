@@ -188,7 +188,7 @@ $where_clause = implode(" AND ", $where_clauses);
 $sql_tarefas = "SELECT t.*, c.nome as cliente_nome 
                 FROM tarefas t
                 LEFT JOIN clientes c ON t.cliente_id = c.id
-                WHERE $where_clause
+                WHERE $where_clause AND t.data_abertura > '2026-01-01'
                 ORDER BY 
                     CASE WHEN t.status = 'concluido' THEN 1 ELSE 0 END,
                     CASE 

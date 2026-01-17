@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnPerigosos = document.querySelectorAll('.btn-warning, .btn-danger');
     
     btnPerigosos.forEach(btn => {
+		if (btn.classList.contains('no-confirm')) return;
         btn.addEventListener('click', function(event) {
             if (!confirm('Tem certeza que deseja realizar esta ação?')) {
                 event.preventDefault();
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
 });
 
 // Função para verificar tempo de inatividade e fazer logout automático
@@ -125,3 +127,6 @@ function abrirRastreadorTempo() {
 	// Abrir a janela
 	window.open('rastreador_tempo.php', 'rastreadorTempo', config);
 }
+
+
+

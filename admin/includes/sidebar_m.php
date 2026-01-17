@@ -18,6 +18,7 @@
             <li><a href="/pp-files/admin/index_m.php">Dashboard</a></li>
 			<li><a href="/pp-files/admin/pages/tarefas_m.php">Gerenciar Tarefas</a></li>
 			<li><a href="/pp-files/admin/pages/precificacao.php">Precificação</a></li>
+			<li><a href="/pp-files/admin/pages/cotacao_moedas.php">Cotação</a></li>
         </ul>
     </nav>
 </aside>
