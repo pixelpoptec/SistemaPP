@@ -2,7 +2,6 @@
 require_once '../../config/auth.php';
 require_once '../../config/estudos.php';
 
-// Verificar se o usuário está logado
 verificaLogin();
 
 // Buscar todos os cadernos do usuário
