@@ -33,6 +33,8 @@ SELECT table_schema AS "Database",
 FROM information_schema.tables 
 GROUP BY table_schema;
 
+select * from tarefas where data_abertura > '2026-01-01 00:00:00'
+
 
 
 
