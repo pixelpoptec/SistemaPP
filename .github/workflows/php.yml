@@ -2,20 +2,19 @@ name: PHP Deploy HostGator
 
 on:
   push:
-    branches: [ "main" ]        # Só roda na main
+    branches: [ "main" ]
 
 permissions:
   contents: read
 
 jobs:
-  deploy-only:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout código
       uses: actions/checkout@v4
 
-    # Empacota tudo para enviar ao servidor
     - name: Empacotar arquivos para deploy
       run: |
         zip -r deploy.zip . \
@@ -35,12 +34,10 @@ jobs:
         SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
         REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
       run: |
-        # Copia o zip para /tmp no servidor
         sshpass -p "$SSH_PASSWORD" scp \
           -o StrictHostKeyChecking=no \
           deploy.zip $SSH_USER@$SSH_HOST:/tmp/deploy.zip
 
-        # Entra no servidor, descompacta e apaga o zip
         sshpass -p "$SSH_PASSWORD" ssh \
           -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
             mkdir -p $REMOTE_PATH &&
@@ -49,3 +46,28 @@ jobs:
             rm /tmp/deploy.zip &&
             echo 'Deploy concluído em ' \$(date)
           "
+
+    # Roda sempre, mesmo se o deploy falhar
+    - name: Notificar por e-mail
+      if: always()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: ${{ secrets.MAIL_HOST }}
+        server_port: ${{ secrets.MAIL_PORT }}
+        username: ${{ secrets.MAIL_USER }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        subject: "[${{ job.status == 'success' && 'SUCESSO' || 'FALHOU' }}] Deploy SistemaPP - ${{ github.ref_name }}"
+        to: ${{ secrets.MAIL_TO }}
+        from: ${{ secrets.MAIL_USER }}
+        body: |
+          Deploy do SistemaPP finalizado com status: ${{ job.status }}
+
+          Detalhes:
+          - Branch: ${{ github.ref_name }}
+          - Commit: ${{ github.sha }}
+          - Autor: ${{ github.actor }}
+          - Data/Hora: ${{ github.event.head_commit.timestamp }}
+          - Mensagem do commit: ${{ github.event.head_commit.message }}
+
+          Ver detalhes completos em:
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
