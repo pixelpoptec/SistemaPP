@@ -8,32 +8,14 @@ permissions:
   contents: read
 
 jobs:
-  build-and-deploy:
+  deploy-only:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout código
       uses: actions/checkout@v4
 
-    # 1) Validar composer.json na subpasta phpmailer/
-    - name: Validar composer (phpmailer/)
-      run: composer validate --strict --working-dir=phpmailer
-
-    # 2) Cache de dependências do composer (phpmailer/vendor)
-    - name: Cache Composer packages (phpmailer/vendor)
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: phpmailer/vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('phpmailer/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
-    # 3) Instalar dependências (somente produção) em phpmailer/
-    - name: Instalar dependências (phpmailer/)
-      run: composer install --prefer-dist --no-progress --no-dev --working-dir=phpmailer
-
-    # 4) Empacotar tudo em deploy.zip, excluindo arquivos que não devem ir pro servidor
+    # Empacota tudo para enviar ao servidor
     - name: Empacotar arquivos para deploy
       run: |
         zip -r deploy.zip . \
@@ -43,11 +25,9 @@ jobs:
           -x "README.md" \
           -x "deploy.zip"
 
-    # 5) Instalar sshpass para usar SSH com senha
     - name: Instalar sshpass
       run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    # 6) Enviar o zip para o servidor e descompactar na pasta do site
     - name: Deploy via SSH para HostGator
       env:
         SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
