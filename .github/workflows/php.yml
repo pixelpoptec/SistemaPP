@@ -8,14 +8,14 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  publicacao:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout código
+    - name: Baixar o código
       uses: actions/checkout@v4
 
-    - name: Empacotar arquivos para deploy
+    - name: Empacotar arquivos para publicação
       run: |
         zip -r deploy.zip . \
           -x ".git/*" \
@@ -27,7 +27,7 @@ jobs:
     - name: Instalar sshpass
       run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    - name: Deploy via SSH para HostGator
+    - name: Publicação via SSH para HostGator
       env:
         SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
         SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
@@ -44,7 +44,7 @@ jobs:
             cd $REMOTE_PATH &&
             unzip -o /tmp/deploy.zip &&
             rm /tmp/deploy.zip &&
-            echo 'Deploy concluído em ' \$(date)
+            echo 'Publicação concluída em ' \$(date)
           "
 
     # Roda sempre, mesmo se o deploy falhar
