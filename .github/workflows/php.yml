@@ -2,24 +2,24 @@ name: PHP Deploy HostGator
 
 on:
   push:
-    branches: [ "main" ]        # Só roda quando der push na main
+    branches: [ "main" ]        # Só roda na main
 
 permissions:
   contents: read
 
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout código
       uses: actions/checkout@v4
 
-    # Composer está na subpasta phpmailer/
-    - name: Validar composer.json (phpmailer/)
+    # 1) Validar composer.json na subpasta phpmailer/
+    - name: Validar composer (phpmailer/)
       run: composer validate --strict --working-dir=phpmailer
 
+    # 2) Cache de dependências do composer (phpmailer/vendor)
     - name: Cache Composer packages (phpmailer/vendor)
       id: composer-cache
       uses: actions/cache@v3
@@ -29,10 +29,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    # 3) Instalar dependências (somente produção) em phpmailer/
     - name: Instalar dependências (phpmailer/)
       run: composer install --prefer-dist --no-progress --no-dev --working-dir=phpmailer
 
-    # Empacota o projeto para enviar ao servidor
+    # 4) Empacotar tudo em deploy.zip, excluindo arquivos que não devem ir pro servidor
     - name: Empacotar arquivos para deploy
       run: |
         zip -r deploy.zip . \
@@ -41,12 +42,12 @@ jobs:
           -x ".gitignore" \
           -x "README.md" \
           -x "deploy.zip"
-        # OBS: phpmailer/vendor vai junto no zip
 
+    # 5) Instalar sshpass para usar SSH com senha
     - name: Instalar sshpass
       run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    # Faz deploy via SSH para HostGator
+    # 6) Enviar o zip para o servidor e descompactar na pasta do site
     - name: Deploy via SSH para HostGator
       env:
         SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
@@ -54,12 +55,12 @@ jobs:
         SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
         REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
       run: |
-        # Copia o zip para o servidor
+        # Copia o zip para /tmp no servidor
         sshpass -p "$SSH_PASSWORD" scp \
           -o StrictHostKeyChecking=no \
           deploy.zip $SSH_USER@$SSH_HOST:/tmp/deploy.zip
 
-        # Acessa o servidor e descompacta na pasta do site
+        # Entra no servidor, descompacta e apaga o zip
         sshpass -p "$SSH_PASSWORD" ssh \
           -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
             mkdir -p $REMOTE_PATH &&
