@@ -1,4 +1,7 @@
 <?php
+require_once '/../config/email.php';
+require_once '/../config/db.php';
+
 // Namespace do PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -54,17 +57,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             // Configurações do servidor
             $mail->isSMTP();                                      // Usar SMTP
-            $mail->Host       = 'smtp.titan.email';           // Servidor SMTP
+            $mail->Host       = EMAIL_HOST;           // Servidor SMTP
             $mail->SMTPAuth   = true;                             // Habilitar autenticação SMTP
-            $mail->Username   = 'contato@pixelpop.com.br';       // SMTP username
-            $mail->Password   = '47Favoritos5$';                      // SMTP password
+            $mail->Username   = EMAIL_USER;       // SMTP username
+            $mail->Password   = EMAIL_PASS;                      // SMTP password
             $mail->SMTPSecure = 'ssl';   // Habilitar criptografia TLS
-            $mail->Port       = 465;                              // Porta TCP para conexão
+            $mail->Port       = EMAIL_PORT;                              // Porta TCP para conexão
             
             // Remetente e destinatário
-            $mail->setFrom('contato@pixelpop.com.br', 'Formulário de Contato');
+            $mail->setFrom(EMAIL_USER, 'Formulário de Contato');
             $mail->addAddress($email, $nome); 
-			$mail->addAddress('contato@pixelpop.com.br', $nome);			// Adicionar destinatário
+			$mail->addAddress(EMAIL_USER, $nome);			// Adicionar destinatário
             $mail->addReplyTo($email, $nome);                           // Endereço para resposta
             
             // Conteúdo do email

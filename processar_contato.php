@@ -1,5 +1,7 @@
 <?php
 //require_once 'notification.php';
+require_once '/../config/db.php';
+require_once '/../config/email.php';
 
 // Inicializa a sessão para mensagens de feedback
 session_start();
@@ -16,7 +18,7 @@ $enviado = false;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Email para receber as mensagens
-    $email_admin = "jaime.pimenta@pixelpop.com.br"; 
+    $email_admin = EMAIL_ADMIN; 
 	
 	$form_id = $_POST['form_id'];
     
@@ -81,10 +83,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Gravação dos dados no BD
         // Substitua essas configurações pelas suas
-        $host = 'pixelpop.com.br';
-        $dbname = 'jaimeg36_pixelpop';
-        $username = 'jaimeg36_admin';
-        $password = '47Favoritos5$';
+        $host = DB_HOST;
+        $dbname = DB_NAME;
+        $username = DB_USER;
+        $password = DB_PASS;
         
         $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -111,15 +113,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Configurações do servidor
         $mail->isSMTP();                                      // Usar SMTP
-        $mail->Host       = 'smtp.titan.email';           // Servidor SMTP
+        $mail->Host       = EMAIL_HOST;           // Servidor SMTP
         $mail->SMTPAuth   = true;                             // Habilitar autenticação SMTP
-        $mail->Username   = 'contato@pixelpop.com.br';       // SMTP username
-        $mail->Password   = '47Favoritos5$';                      // SMTP password
+        $mail->Username   = EMAIL_USER;       // SMTP username
+        $mail->Password   = EMAIL_PASS;                      // SMTP password
         $mail->SMTPSecure = 'ssl';   // Habilitar criptografia TLS
-        $mail->Port       = 465;                              // Porta TCP para conexão
+        $mail->Port       = EMAIL_PORT;                              // Porta TCP para conexão
         
         // Remetente e destinatário
-        $mail->setFrom('contato@pixelpop.com.br', 'Formulário de Contato');
+        $mail->setFrom(EMAIL_USER, 'Formulário de Contato');
         //$mail->addAddress($email, $nome); 
         $mail->addAddress($email_admin, $nome);            // Adicionar destinatário da Pixel Pop
         $mail->addReplyTo($email, $nome);                           // Endereço para resposta

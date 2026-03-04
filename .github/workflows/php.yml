@@ -1,39 +1,70 @@
-name: PHP Composer
+name: PHP Deploy HostGator
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "main" ]        # Só roda quando der push na main
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  build-and-deploy:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout código
+      uses: actions/checkout@v4
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+    # Composer está na subpasta phpmailer/
+    - name: Validar composer.json (phpmailer/)
+      run: composer validate --strict --working-dir=phpmailer
 
-    - name: Cache Composer packages
+    - name: Cache Composer packages (phpmailer/vendor)
       id: composer-cache
       uses: actions/cache@v3
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        path: phpmailer/vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('phpmailer/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+    - name: Instalar dependências (phpmailer/)
+      run: composer install --prefer-dist --no-progress --no-dev --working-dir=phpmailer
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    # Empacota o projeto para enviar ao servidor
+    - name: Empacotar arquivos para deploy
+      run: |
+        zip -r deploy.zip . \
+          -x ".git/*" \
+          -x ".github/*" \
+          -x ".gitignore" \
+          -x "README.md" \
+          -x "deploy.zip"
+        # OBS: phpmailer/vendor vai junto no zip
 
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: Instalar sshpass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
+
+    # Faz deploy via SSH para HostGator
+    - name: Deploy via SSH para HostGator
+      env:
+        SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
+        SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
+        SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
+        REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
+      run: |
+        # Copia o zip para o servidor
+        sshpass -p "$SSH_PASSWORD" scp \
+          -o StrictHostKeyChecking=no \
+          deploy.zip $SSH_USER@$SSH_HOST:/tmp/deploy.zip
+
+        # Acessa o servidor e descompacta na pasta do site
+        sshpass -p "$SSH_PASSWORD" ssh \
+          -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+            mkdir -p $REMOTE_PATH &&
+            cd $REMOTE_PATH &&
+            unzip -o /tmp/deploy.zip &&
+            rm /tmp/deploy.zip &&
+            echo 'Deploy concluído em ' \$(date)
+          "
