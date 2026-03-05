@@ -45,6 +45,13 @@ jobs:
             # Mantém apenas os últimos 5 backups
             ls -t \$BACKUP_DIR/backup_*.zip | tail -n +6 | xargs rm -f
           "      
+    - name: Validar sintaxe PHP
+      run: |
+        find . -name "*.php" \
+          -not -path "./.git/*" \
+          -not -path "./vendor/*" \
+          | xargs -I {} php -l {}
+        echo "Todos os arquivos PHP estão válidos"
 
     - name: Publicação via SSH para HostGator
       env:
