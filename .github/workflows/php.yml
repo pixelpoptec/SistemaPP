@@ -26,6 +26,25 @@ jobs:
 
     - name: Instalar sshpass
       run: sudo apt-get update && sudo apt-get install -y sshpass
+      
+    - name: Backup antes do deploy
+      env:
+        SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
+        SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
+        SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
+        REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
+      run: |
+        sshpass -p "$SSH_PASSWORD" ssh \
+          -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+            BACKUP_DIR=/home4/jaimeg36/backups
+            mkdir -p \$BACKUP_DIR
+            cd $REMOTE_PATH
+            zip -r \$BACKUP_DIR/backup_\$(date +%Y%m%d_%H%M%S).zip .
+            echo 'Backup criado em ' \$(date)
+
+            # Mantém apenas os últimos 5 backups
+            ls -t \$BACKUP_DIR/backup_*.zip | tail -n +6 | xargs rm -f
+          "      
 
     - name: Publicação via SSH para HostGator
       env:
