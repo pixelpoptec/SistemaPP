@@ -46,11 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="login-container">
-        <h2 class="gradiente">Login - v1.32</h2>
+        <h2 class="gradiente">Login - v1.33</h2>
         
         <?php if (!empty($erro)): ?>
             <div class="alert alert-danger"><?php echo $erro; ?></div>
-        <?php endif; ?>
+        <php endif; ?>
         
         <?php if (isset($_GET['erro']) && $_GET['erro'] === 'login_necessario'): ?>
             <div class="alert alert-warning">Você precisa fazer login para acessar esta página.</div>
