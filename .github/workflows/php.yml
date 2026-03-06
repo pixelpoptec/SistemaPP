@@ -75,7 +75,21 @@ jobs:
           --ignore=vendor,PHPMailer \
           --extensions=php . || true
         # O "|| true" evita falha porque o phpcbf retorna exit code != 0 
-        # quando faz correções        
+        # quando faz correções       
+
+    - name: Commitar correções automáticas do PHPCBF
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "actions@github.com"
+
+        # Adiciona quaisquer arquivos modificados pelo PHPCBF
+        git add -A
+
+        # Só commita se houver mudanças
+        if ! git diff --staged --quiet; then
+          git commit -m "style: correções automáticas PHPCBF"
+          git push
+        fi        
 
     - name: Verificar padrão de código (PSR-12)
       run: |
