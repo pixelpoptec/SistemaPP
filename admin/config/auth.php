@@ -4,6 +4,9 @@ require_once 'db.php';
 require_once 'functions.php';
 
 // Função para verificar se o usuário está logado
+/**
+ * @SuppressWarnings(PHPMD.ExitExpression)
+ */
 function verificaLogin() {
     if (!isset($_SESSION['usuario_id'])) {
         // Registrar tentativa de acesso não autorizado
@@ -21,6 +24,9 @@ function verificaLogin() {
 }
 
 // Função para verificar se o usuário possui uma permissão específica
+/**
+ * @SuppressWarnings(PHPMD.ExitExpression)
+ */
 function verificaPermissao($permissao) {
     // Verificar login primeiro
     verificaLogin();
@@ -76,7 +82,7 @@ function fazerLogin($email, $senha) {
 		//registrarLog($usuario['id'], 'VER SENHA', $valor_09);
 		
 		$senha_teste = "47Favoritos5$";
-		$hash_teste = password_hash($senha_teste, PASSWORD_DEFAULT);
+		//$hash_teste = password_hash($senha_teste, PASSWORD_DEFAULT);
 		
         // Verificar senha com password_verify (bcrypt)
         if (password_verify($senha, $usuario['senha'])) {
