@@ -136,11 +136,11 @@ function calculateCRC16($str) {
         $crc ^= ord(substr($str, $c, 1)) << 8;
         
         for ($i = 0; $i < 8; $i++) {
-            if ($crc & 0x8000) {
+            $crc = $crc << 1;
+			
+			if ($crc & 0x8000) {
                 $crc = ($crc << 1) ^ 0x1021;
-            } else {
-                $crc = $crc << 1;
-            }
+            } 
         }
     }
     
