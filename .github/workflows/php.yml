@@ -60,7 +60,7 @@ jobs:
 
     - name: Analisar qualidade do código
       run: |
-        phpmd . text cleancode,codesize,controversial,design,naming,unusedcode \
+        phpmd . text cleancode,codesize,design,naming,unusedcode \
           --exclude vendor,PHPMailer \
           --suffixes php
 

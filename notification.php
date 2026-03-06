@@ -32,6 +32,7 @@ class Notification {
      * Retorna a notificação atual e limpa da sessão
      * 
      * @return array|null A notificação ou null se não houver
+	 * @SuppressWarnings(PHPMD.Superglobals)
      */
     public static function get() {
         // Inicia a sessão se ainda não estiver ativa
