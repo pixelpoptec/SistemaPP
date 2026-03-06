@@ -136,6 +136,9 @@ try {
 	file_put_contents($arquivo, $conteudo);		*/
 }
 
+/**
+ * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
+ */
 function atualizaTempoRastreamento($conn, $registro_id, $segundos_totais, $tempo_horas, $tempo_minutos, $observacoes, $pasta_log = 'logs') {
     //atualizaTempoRastreamento($conn, $registro_id, $segundos_totais, $tempo_horas, $tempo_minutos, $observacoes);
 	// Ativa erros do MySQLi
