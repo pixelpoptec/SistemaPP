@@ -16,13 +16,13 @@ if (!isset($_GET['modulo_id']) || !is_numeric($_GET['modulo_id'])) {
 $modulo_id = intval($_GET['modulo_id']);
 
 // Função para obter detalhes do módulo
-function getModuloDetalhes($conn, $id) {
+function getModuloDetalhes($conn, $id_seq) {
     $sql = "SELECT m.*, p.id as projeto_id, p.nome as projeto_nome 
             FROM modulos m
             JOIN projetos p ON m.projeto_id = p.id
             WHERE m.id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $id_seq);
     $stmt->execute();
     $result = $stmt->get_result();
 

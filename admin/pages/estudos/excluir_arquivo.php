@@ -14,11 +14,11 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !isset($_GET['nota_id']) || emp
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 $nota_id = intval($_GET['nota_id']);
 
 // Excluir arquivo
-$resultado = excluirArquivo($conn, $id, $_SESSION['usuario_id']);
+$resultado = excluirArquivo($conn, $id_seq, $_SESSION['usuario_id']);
 
 if ($resultado) {
     $_SESSION['mensagem'] = "Arquivo excluído com sucesso!";

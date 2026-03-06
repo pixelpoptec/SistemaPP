@@ -13,10 +13,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 
 // Buscar nota
-$nota = buscarNota($conn, $id, $_SESSION['usuario_id']);
+$nota = buscarNota($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Verificar se a nota existe e pertence ao usuário
 if (!$nota) {
@@ -27,7 +27,7 @@ if (!$nota) {
 }
 
 // Buscar arquivos da nota
-$arquivos = buscarArquivos($conn, $id, $_SESSION['usuario_id']);
+$arquivos = buscarArquivos($conn, $id_seq, $_SESSION['usuario_id']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -73,10 +73,10 @@ $arquivos = buscarArquivos($conn, $id, $_SESSION['usuario_id']);
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2><?php echo htmlspecialchars($nota['titulo']); ?></h2>
                         <div>
-                            <a href="editar_nota.php?id=<?php echo $id; ?>" class="btn btn-warning me-2 no-confirm">
+                            <a href="editar_nota.php?id=<?php echo $id_seq; ?>" class="btn btn-warning me-2 no-confirm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <a href="excluir_nota.php?id=<?php echo $id; ?>" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta nota?')">
+                            <a href="excluir_nota.php?id=<?php echo $id_seq; ?>" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta nota?')">
                                 <i class="fas fa-trash"></i> Excluir
                             </a>
                         </div>

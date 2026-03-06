@@ -18,10 +18,10 @@ function buscarCadernos($conn, $usuario_id) {
 }
 
 // Buscar um caderno específico
-function buscarCaderno($conn, $id, $usuario_id) {
+function buscarCaderno($conn, $id_seq, $usuario_id) {
     $sql = "SELECT * FROM cadernos WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $id, $usuario_id);
+    $stmt->bind_param("ii", $id_seq, $usuario_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -42,19 +42,19 @@ function criarCaderno($conn, $titulo, $usuario_id) {
 }
 
 // Atualizar um caderno
-function atualizarCaderno($conn, $id, $titulo, $usuario_id) {
+function atualizarCaderno($conn, $id_seq, $titulo, $usuario_id) {
     $sql = "UPDATE cadernos SET titulo = ? WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sii", $titulo, $id, $usuario_id);
+    $stmt->bind_param("sii", $titulo, $id_seq, $usuario_id);
 
     return $stmt->execute();
 }
 
 // Excluir um caderno
-function excluirCaderno($conn, $id, $usuario_id) {
+function excluirCaderno($conn, $id_seq, $usuario_id) {
     $sql = "DELETE FROM cadernos WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $id, $usuario_id);
+    $stmt->bind_param("ii", $id_seq, $usuario_id);
 
     return $stmt->execute();
 }
@@ -76,13 +76,13 @@ function buscarNotas($conn, $caderno_id, $usuario_id) {
 }
 
 // Buscar uma nota específica
-function buscarNota($conn, $id, $usuario_id) {
+function buscarNota($conn, $id_seq, $usuario_id) {
     $sql = "SELECT n.*, c.titulo as caderno_titulo 
             FROM notas n 
             JOIN cadernos c ON n.caderno_id = c.id 
             WHERE n.id = ? AND n.usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $id, $usuario_id);
+    $stmt->bind_param("ii", $id_seq, $usuario_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -103,19 +103,19 @@ function criarNota($conn, $titulo, $conteudo, $caderno_id, $usuario_id) {
 }
 
 // Atualizar uma nota
-function atualizarNota($conn, $id, $titulo, $conteudo, $caderno_id, $usuario_id) {
+function atualizarNota($conn, $id_seq, $titulo, $conteudo, $caderno_id, $usuario_id) {
     $sql = "UPDATE notas SET titulo = ?, conteudo = ?, caderno_id = ? WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssiii", $titulo, $conteudo, $caderno_id, $id, $usuario_id);
+    $stmt->bind_param("ssiii", $titulo, $conteudo, $caderno_id, $id_seq, $usuario_id);
 
     return $stmt->execute();
 }
 
 // Excluir uma nota
-function excluirNota($conn, $id, $usuario_id) {
+function excluirNota($conn, $id_seq, $usuario_id) {
     $sql = "DELETE FROM notas WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $id, $usuario_id);
+    $stmt->bind_param("ii", $id_seq, $usuario_id);
 
     return $stmt->execute();
 }
@@ -173,11 +173,11 @@ function salvarArquivo($conn, $arquivo, $nota_id, $usuario_id) {
 }
 
 // Excluir arquivo
-function excluirArquivo($conn, $id, $usuario_id) {
+function excluirArquivo($conn, $id_seq, $usuario_id) {
     // Buscar informações do arquivo
     $sql = "SELECT * FROM arquivos WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $id, $usuario_id);
+    $stmt->bind_param("ii", $id_seq, $usuario_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $arquivo = $result->fetch_assoc();
@@ -192,7 +192,7 @@ function excluirArquivo($conn, $id, $usuario_id) {
         // Excluir registro do banco de dados
         $sql = "DELETE FROM arquivos WHERE id = ? AND usuario_id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $id, $usuario_id);
+        $stmt->bind_param("ii", $id_seq, $usuario_id);
 
         return $stmt->execute();
     }

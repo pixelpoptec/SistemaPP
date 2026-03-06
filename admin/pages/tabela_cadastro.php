@@ -16,10 +16,10 @@ if (!isset($_GET['projeto_id']) || !is_numeric($_GET['projeto_id'])) {
 $projeto_id = intval($_GET['projeto_id']);
 
 // Função para obter detalhes do projeto
-function getProjetoDetalhes($conn, $id) {
+function getProjetoDetalhes($conn, $id_seq) {
     $sql = "SELECT * FROM projetos WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $id_seq);
     $stmt->execute();
     $result = $stmt->get_result();
 

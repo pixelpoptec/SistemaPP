@@ -14,10 +14,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 
 // Buscar caderno
-$caderno = buscarCaderno($conn, $id, $_SESSION['usuario_id']);
+$caderno = buscarCaderno($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Verificar se o caderno existe e pertence ao usuário
 if (!$caderno) {
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['tipo_mensagem'] = "danger";
     } else {
         // Atualizar caderno
-        $resultado = atualizarCaderno($conn, $id, $titulo, $_SESSION['usuario_id']);
+        $resultado = atualizarCaderno($conn, $id_seq, $titulo, $_SESSION['usuario_id']);
 
         if ($resultado) {
             $_SESSION['mensagem'] = "Caderno atualizado com sucesso!";
@@ -94,7 +94,7 @@ ob_end_flush();
                 <?php endif; ?>
 
                 <div class="panel-section">
-                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $id; ?>">
+                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $id_seq; ?>">
                         <div class="mb-3">
                             <label for="titulo" class="form-label">Título do Caderno</label>
                             <input type="text" class="form-control" id="titulo" name="titulo" value="<?php echo htmlspecialchars($caderno['titulo']); ?>" required>

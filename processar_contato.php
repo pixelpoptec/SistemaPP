@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':status', $status);
         
         $stmt->execute();
-        $id_contato = $pdo->lastInsertId();
+        $id_seq_contato = $pdo->lastInsertId();
         // Gravação dos dados no BD
         
         // Configurações do servidor
@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <span class='label'>FORMULARIO:</span> $form_id
                     </div>
                     <div class='info-item'>
-                        <span class='label'>ID:</span> #$id_contato
+                        <span class='label'>ID:</span> #$id_seq_contato
                     </div>					
                     <div class='info-item'>
                         <span class='label'>Data/Hora:</span> " . date('d/m/Y H:i', strtotime($data_envio)) . "
@@ -179,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     
                     <p>
-                        <a href='https://pixelpop.com.br/admin/contatos.php?id=$id_contato' 
+                        <a href='https://pixelpop.com.br/admin/contatos.php?id=$id_seq_contato' 
                            style='background-color:#6b705c;color:white;padding:10px 15px;text-decoration:none;border-radius:4px;display:inline-block;'>
                            Gerenciar Mensagem
                         </a>
@@ -210,10 +210,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['contato_status'] = "error";
         
         // Se o PDO já foi definido e o ID do contato já existe
-        if (isset($pdo) && isset($id_contato)) {
+        if (isset($pdo) && isset($id_seq_contato)) {
             try {
                 $stmt = $pdo->prepare("UPDATE contatos SET observacoes = 'Problema no envio de emails' WHERE id = :id");
-                $stmt->bindParam(':id', $id_contato);
+                $stmt->bindParam(':id', $id_seq_contato);
                 $stmt->execute();
             } catch (Exception $dbEx) {
                 // Erro na atualização do banco de dados

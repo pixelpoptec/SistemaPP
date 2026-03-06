@@ -14,10 +14,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 
 // Buscar nota
-$nota = buscarNota($conn, $id, $_SESSION['usuario_id']);
+$nota = buscarNota($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Verificar se a nota existe e pertence ao usuário
 if (!$nota) {
@@ -31,10 +31,10 @@ if (!$nota) {
 $caderno_id = $nota['caderno_id'];
 
 // Excluir nota
-$resultado = excluirNota($conn, $id, $_SESSION['usuario_id']);
+$resultado = excluirNota($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Excluir arquivo
-$resultado_arquivo = excluirArquivo($conn, $id, $_SESSION['usuario_id']);
+$resultado_arquivo = excluirArquivo($conn, $id_seq, $_SESSION['usuario_id']);
 
 if ($resultado) {
     $_SESSION['mensagem'] = "Nota excluída com sucesso!";

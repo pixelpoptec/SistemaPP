@@ -14,10 +14,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 
 // Buscar nota
-$nota = buscarNota($conn, $id, $_SESSION['usuario_id']);
+$nota = buscarNota($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Verificar se a nota existe e pertence ao usuário
 if (!$nota) {
@@ -31,7 +31,7 @@ if (!$nota) {
 $cadernos = buscarCadernos($conn, $_SESSION['usuario_id']);
 
 // Buscar arquivos da nota
-$arquivos = buscarArquivos($conn, $id, $_SESSION['usuario_id']);
+$arquivos = buscarArquivos($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Processar formulário
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['tipo_mensagem'] = "danger";
     } else {
         // Atualizar nota
-        $resultado = atualizarNota($conn, $id, $titulo, $conteudo, $caderno_id, $_SESSION['usuario_id']);
+        $resultado = atualizarNota($conn, $id_seq, $titulo, $conteudo, $caderno_id, $_SESSION['usuario_id']);
 
         if ($resultado) {
             // Processar arquivos, se houver
@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 foreach ($arquivos_novos as $arquivo) {
                     if ($arquivo['error'] === 0) {
-                        salvarArquivo($conn, $arquivo, $id, $_SESSION['usuario_id']);
+                        salvarArquivo($conn, $arquivo, $id_seq, $_SESSION['usuario_id']);
                     }
                 }
             }
@@ -132,7 +132,7 @@ ob_end_flush();
                 <?php endif; ?>
 
                 <div class="panel-section">
-                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $id; ?>" enctype="multipart/form-data">
+                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?id=" . $id_seq; ?>" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="titulo" class="form-label">Título da Nota</label>
                             <input type="text" class="form-control" id="titulo" name="titulo" value="<?php echo htmlspecialchars($nota['titulo']); ?>" required>
@@ -167,7 +167,7 @@ ob_end_flush();
                                                 <a href="download_arquivo.php?id=<?php echo $arquivo['id']; ?>" class="btn btn-sm btn-info me-2">
                                                     <i class="fas fa-download"></i>
                                                 </a>
-                                                <a href="excluir_arquivo.php?id=<?php echo $arquivo['id']; ?>&nota_id=<?php echo $id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este arquivo?')">
+                                                <a href="excluir_arquivo.php?id=<?php echo $arquivo['id']; ?>&nota_id=<?php echo $id_seq; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este arquivo?')">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>

@@ -13,12 +13,12 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 
 // Buscar informações do arquivo
 $sql = "SELECT * FROM arquivos WHERE id = ? AND usuario_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $id, $_SESSION['usuario_id']);
+$stmt->bind_param("ii", $id_seq, $_SESSION['usuario_id']);
 $stmt->execute();
 $result = $stmt->get_result();
 $arquivo = $result->fetch_assoc();

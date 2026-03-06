@@ -5208,9 +5208,9 @@ class PHPMailer
         $body = $this->DKIM_BodyC($body);
         //Base64 of packed binary SHA-256 hash of body
         $DKIMb64 = base64_encode(pack('H*', hash('sha256', $body)));
-        $ident = '';
+        $id_seqent = '';
         if ('' !== $this->DKIM_identity) {
-            $ident = ' i=' . $this->DKIM_identity . ';' . static::$LE;
+            $id_seqent = ' i=' . $this->DKIM_identity . ';' . static::$LE;
         }
         //The DKIM-Signature header is included in the signature *except for* the value of the `b` tag
         //which is appended after calculating the signature
@@ -5223,7 +5223,7 @@ class PHPMailer
             ' t=' . $DKIMtime . ';' .
             ' c=' . $DKIMcanonicalization . ';' . static::$LE .
             $headerKeys .
-            $ident .
+            $id_seqent .
             $copiedHeaderFields .
             ' bh=' . $DKIMb64 . ';' . static::$LE .
             ' b=';

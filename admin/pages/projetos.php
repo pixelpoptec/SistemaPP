@@ -25,10 +25,10 @@ function listarProjetos($conn) {
 
 // Excluir projeto
 if (isset($_GET['excluir']) && is_numeric($_GET['excluir'])) {
-    $id = intval($_GET['excluir']);
+    $id_seq = intval($_GET['excluir']);
     $sql = "DELETE FROM projetos WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $id_seq);
 
     if ($stmt->execute()) {
         $_SESSION['mensagem'] = "Projeto excluído com sucesso!";

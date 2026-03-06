@@ -14,10 +14,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-$id = intval($_GET['id']);
+$id_seq = intval($_GET['id']);
 
 // Buscar caderno
-$caderno = buscarCaderno($conn, $id, $_SESSION['usuario_id']);
+$caderno = buscarCaderno($conn, $id_seq, $_SESSION['usuario_id']);
 
 // Verificar se o caderno existe e pertence ao usuário
 if (!$caderno) {
@@ -28,7 +28,7 @@ if (!$caderno) {
 }
 
 // Excluir caderno
-$resultado = excluirCaderno($conn, $id, $_SESSION['usuario_id']);
+$resultado = excluirCaderno($conn, $id_seq, $_SESSION['usuario_id']);
 
 if ($resultado) {
     $_SESSION['mensagem'] = "Caderno excluído com sucesso!";
