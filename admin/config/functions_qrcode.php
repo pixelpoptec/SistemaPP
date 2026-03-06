@@ -94,18 +94,22 @@ function generatePixPayload($pixKey, $amount, $name = '', $city = '', $descripti
     $payload .= '5802BR';
     
     // Merchant Name
-    if (!empty($name)) {
-        $payload .= '59' . sprintf('%02d', strlen($name)) . $name;
-    } else {
-        $payload .= '5913Beneficiario';
-    }
-    
+	$merchantName = '5913Beneficiario';        // valor padrão
+
+	if (!empty($name)) {
+		$merchantName = '59' . sprintf('%02d', strlen($name)) . $name;
+	}
+
+	$payload .= $merchantName;
+		
     // Merchant City
-    if (!empty($city)) {
-        $payload .= '60' . sprintf('%02d', strlen($city)) . $city;
-    } else {
-        $payload .= '6008BRASILIA';
-    }
+	$merchantCity = '6008BRASILIA';
+
+	if (!empty($city)) {
+		$merchantCity = '60' . sprintf('%02d', strlen($city)) . $city;
+	}
+
+	$payload .= $merchantCity;
     
     // Additional Data Field
     $payload .= '62070503***';
