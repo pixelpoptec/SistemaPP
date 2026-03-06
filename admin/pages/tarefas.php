@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 require_once '../config/auth.php';
 require_once '../config/functions_excel.php';
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Editar tarefa
-        else if ($acao === 'editar') {
+        elseif ($acao === 'editar') {
             $tarefa_id = (int)$_POST['tarefa_id'];
             $nome = sanitizar($_POST['nome']);
             $detalhes = sanitizar($_POST['detalhes']);
@@ -97,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Excluir tarefa
-        else if ($acao === 'excluir') {
+        elseif ($acao === 'excluir') {
             $tarefa_id = (int)$_POST['tarefa_id'];
             
             $sql = "DELETE FROM tarefas WHERE id = ?";
@@ -113,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Atualizar status da tarefa
-        else if ($acao === 'atualizar_status') {
+        elseif ($acao === 'atualizar_status') {
             $tarefa_id = (int)$_POST['tarefa_id'];
             $novo_status = sanitizar($_POST['novo_status']);
             
