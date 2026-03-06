@@ -1,0 +1,34 @@
+# Dependências
+/vendor/
+
+# Arquivos de diagnóstico e teste
+info-email.php
+test_pix.php
+qrcode_test.html
+
+# Arquivos de configuração sensíveis
+/admin/config/db.php
+*.env
+.env
+
+# Logs
+*.log
+/logs/
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Upload de usuários (se tiver)
+/uploads/
