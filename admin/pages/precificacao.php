@@ -70,7 +70,7 @@ function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_u
 	// @phpmd suppress SuperGlobals
     $lucro_liquido = $lucro_padrao - ($preco_consumidor * $config['tx_cartao']) - ($preco_consumidor * $config['custo_anuncio']);
 	// @phpmd suppress SuperGlobals
-    $lucro_liq_porcentagem = $lucro_liquido / $preco_consumidor;
+    $lucro_liq_porc = $lucro_liquido / $preco_consumidor;
     
     // Valor total
     $valor_total = $preco_consumidor * $qtd_pecas;
@@ -97,7 +97,7 @@ function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_u
         'preco_lojista' => $preco_lojista,
         'lucro_padrao' => $lucro_padrao,
         'lucro_liquido' => $lucro_liquido,
-        'lucro_liq_porcentagem' => $lucro_liq_porcentagem,
+        'lucro_liq_porc' => $lucro_liq_porc,
         'valor_total' => $valor_total,
         'qtd_pecas' => $qtd_pecas,
         'acessorios_uni' => $acessorios_uni
@@ -225,7 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 									</li>
 									<li class="list-group-item d-flex justify-content-between align-items-center">
 										<strong>Lucro Líquido (%)</strong>
-										<span class="profit-highlight"><?php echo number_format($resultado['lucro_liq_porcentagem']*100, 2, ',', '.'); ?> %</span>
+										<span class="profit-highlight"><?php echo number_format($resultado['lucro_liq_porc']*100, 2, ',', '.'); ?> %</span>
 									</li>    
 									<li class="list-group-item d-flex justify-content-between align-items-center">
 										<strong>Preço por unidade</strong>
