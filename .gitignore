@@ -5,6 +5,7 @@
 info-email.php
 test_pix.php
 qrcode_test.html
+deploy.zip
 
 # Arquivos de configuração sensíveis
 /admin/config/db.php
