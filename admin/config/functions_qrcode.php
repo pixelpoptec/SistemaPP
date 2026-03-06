@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Common\EccLevel;
+use Exception; 
 
 // Verificar se o usuário está logado
 verificaLogin();
@@ -148,53 +149,40 @@ function calculateCRC16($str) {
 }
 
 /**
- * Gera o QR Code usando a biblioteca PHP QR Code
+ * @SuppressWarnings(PHPMD.MissingImport)
  */
-function generateQRCode($data) {
-    // Se você estiver usando a biblioteca chillerlan/php-qrcode
+function generateQRCode(string $data): string
+{
+    // Tenta usar chillerlan (instalada via Composer)
     if (class_exists('chillerlan\QRCode\QRCode')) {
-        
-		$arquivo = 'arquivo_' . date('Ymd_His') . '.txt';;
-		$conteudo = 'tem classe chillerlan\php-qrcode\QRCode';
-		file_put_contents($arquivo, $conteudo); 			
-		
-		$options = new QROptions([
-			'version'      => 5,
-			'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
-			'eccLevel'     => QRCode::ECC_L,
-			'scale'        => 10,
-			'imageBase64'  => true,
-		]);
+        $options = new QROptions([
+            'version'     => 5,
+            'outputType'  => QRCode::OUTPUT_IMAGE_PNG,
+            'eccLevel'    => QRCode::ECC_L,
+            'scale'       => 10,
+            'imageBase64' => true,
+        ]);
 
-		$qrcode = new QRCode($options);
-		return $qrcode->render($data);
+        $qrcode = new QRCode($options);
+        return $qrcode->render($data);
     }
-    
-    // Alternativa usando a biblioteca PHP QR Code (se a chillerlan não estiver disponível)
-    if (class_exists('chillerlan\QRCode\QRCode')) {
 
-		// Caminho para a biblioteca PHP QR Code
+    // Fallback para phpqrcode (biblioteca local)
+    if (file_exists('lib/phpqrcode/qrlib.php')) {
         require_once 'lib/phpqrcode/qrlib.php';
-        
-        // Cria um arquivo temporário para o QR Code
-        $tempDir = sys_get_temp_dir();
-        $fileName = tempnam($tempDir, 'qrcode_');
-        $fileName .= '.png';
-        
-        // Gera o QR Code
-		$qrcode = new \QRcode();
-        $qrcode->png($data, $fileName, 'L', 10, 2);
-        
-        // Converte para base64
+
+        $tempDir  = sys_get_temp_dir();
+        $fileName = tempnam($tempDir, 'qrcode_') . '.png';
+
+        QRcode::png($data, $fileName, 'L', 10, 2);
+
         $imageData = file_get_contents($fileName);
-        $base64 = 'data:image/png;base64,' . base64_encode($imageData);
-        
-        // Remove o arquivo temporário
+        $base64    = 'data:image/png;base64,' . base64_encode($imageData);
+
         unlink($fileName);
-        
         return $base64;
     }
-    
+
     throw new Exception('Nenhuma biblioteca de QR Code encontrada.');
 }
 ?>
