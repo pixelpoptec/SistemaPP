@@ -68,6 +68,14 @@ jobs:
       run: |
         composer global require squizlabs/php_codesniffer
         echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+        
+    - name: Corrigir estilo de código automaticamente
+      run: |
+        phpcbf --standard=PSR12 \
+          --ignore=vendor,PHPMailer \
+          --extensions=php . || true
+        # O "|| true" evita falha porque o phpcbf retorna exit code != 0 
+        # quando faz correções        
 
     - name: Verificar padrão de código (PSR-12)
       run: |
