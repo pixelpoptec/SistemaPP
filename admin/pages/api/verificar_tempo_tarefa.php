@@ -1,4 +1,5 @@
 <?php
+
 //Esse arquivo retorna o tempo já gravado na tarefa
 session_start();
 require_once '../../config/auth.php';
@@ -25,15 +26,15 @@ if ($result->num_rows === 0) {
 }
 
 $row = $result->fetch_assoc();
-$tempo_gasto = (int)$row['tempo_horas']/60 + (int)$row['tempo_minutos'];
+$tempo_gasto = (int)$row['tempo_horas'] / 60 + (int)$row['tempo_minutos'];
 
 if ($tempo_gasto > 0) {
     // Formatar o tempo (tempo_gasto está em minutos)
     $horas = $row['tempo_horas'];
     $minutos = $row['tempo_minutos'];
-    
+
     $tempo_formatado = sprintf("%02dh%02dm", $horas, $minutos);
-    
+
     $response = [
         'tempoRegistrado' => true,
         'tempoMinutos' => $minutos,
@@ -42,4 +43,4 @@ if ($tempo_gasto > 0) {
 }
 
 echo json_encode($response);
-?>
+
