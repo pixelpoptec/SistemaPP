@@ -86,7 +86,6 @@ function fazerLogin($email, $senha)
 
         // Verificar senha com password_verify (bcrypt)
         if (password_verify($senha, $usuario['senha'])) {
-
             // Iniciar sessão
             $_SESSION['usuario_id']    = $usuario['id'];
             $_SESSION['usuario_nome']  = $usuario['nome'];

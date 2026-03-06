@@ -1,4 +1,5 @@
 <?php
+
 require_once '../config/auth.php';
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
@@ -44,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function generatePixPayload($pixKey, $amount, $name = '', $city = '', $description = '') {
+function generatePixPayload($pixKey, $amount, $name = '', $city = '', $description = '')
+{
     $payload = '000201';
     $payload .= '010212';
     $payload .= '26';
@@ -83,18 +85,19 @@ function generatePixPayload($pixKey, $amount, $name = '', $city = '', $descripti
     return $payload;
 }
 
-function calculateCRC16($str) {
+function calculateCRC16($str)
+{
     $crc    = 0xFFFF;
     $strlen = strlen($str);
 
     for ($c = 0; $c < $strlen; $c++) {
         $crc ^= ord(substr($str, $c, 1)) << 8;
 
-		for ($i = 0; $i < 8; $i++) {
-			$crc = ($crc & 0x8000)
-				? ($crc << 1) ^ 0x1021
-				: $crc << 1;
-		}
+        for ($i = 0; $i < 8; $i++) {
+            $crc = ($crc & 0x8000)
+                ? ($crc << 1) ^ 0x1021
+                : $crc << 1;
+        }
     }
 
     return $crc & 0xFFFF;
@@ -116,4 +119,3 @@ function generateQRCode(string $data): string
     $qrcode = new QRCode($options);
     return $qrcode->render($data);
 }
-?>

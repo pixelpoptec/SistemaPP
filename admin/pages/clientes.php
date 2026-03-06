@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = 'Erro de segurança. Por favor, tente novamente.';
     } else {
         $acao = $_POST['acao'] ?? '';
-        
+
         // Adicionar cliente
         if ($acao === 'adicionar') {
             $nome = sanitizar($_POST['nome']);
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $empresa = sanitizar($_POST['empresa'] ?? '');
             $endereco = sanitizar($_POST['endereco'] ?? '');
             $observacoes = sanitizar($_POST['observacoes'] ?? '');
-            
+
             // Validar email se fornecido
             if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $erro = 'Email inválido';
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         VALUES (?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("ssssssi", $nome, $email, $telefone, $empresa, $endereco, $observacoes, $_SESSION['usuario_id']);
-                
+
                 if ($stmt->execute()) {
                     $cliente_id = $stmt->insert_id;
                     registrarLog($_SESSION['usuario_id'], 'CLIENTE_ADICIONADO', "Cliente ID: $cliente_id adicionado");
@@ -44,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
-        
+
         // Editar cliente
-        else if ($acao === 'editar') {
+        elseif ($acao === 'editar') {
             $cliente_id = (int)$_POST['cliente_id'];
             $nome = sanitizar($_POST['nome']);
             $email = sanitizar($_POST['email'] ?? '');
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $empresa = sanitizar($_POST['empresa'] ?? '');
             $endereco = sanitizar($_POST['endereco'] ?? '');
             $observacoes = sanitizar($_POST['observacoes'] ?? '');
-            
+
             // Validar email se fornecido
             if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $erro = 'Email inválido';
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         WHERE id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("ssssssi", $nome, $email, $telefone, $empresa, $endereco, $observacoes, $cliente_id);
-                
+
                 if ($stmt->execute()) {
                     registrarLog($_SESSION['usuario_id'], 'CLIENTE_EDITADO', "Cliente ID: $cliente_id editado");
                     $sucesso = 'Cliente atualizado com sucesso!';
@@ -73,25 +73,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
-        
+
         // Excluir cliente
-        else if ($acao === 'excluir') {
+        elseif ($acao === 'excluir') {
             $cliente_id = (int)$_POST['cliente_id'];
-            
+
             // Verificar se há tarefas associadas
             $sql_verifica = "SELECT COUNT(*) as total FROM tarefas WHERE cliente_id = ?";
             $stmt_verifica = $conn->prepare($sql_verifica);
             $stmt_verifica->bind_param("i", $cliente_id);
             $stmt_verifica->execute();
             $resultado = $stmt_verifica->get_result()->fetch_assoc();
-            
+
             if ($resultado['total'] > 0) {
                 $erro = 'Não é possível excluir este cliente pois há tarefas associadas a ele.';
             } else {
                 $sql = "DELETE FROM clientes WHERE id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $cliente_id);
-                
+
                 if ($stmt->execute()) {
                     registrarLog($_SESSION['usuario_id'], 'CLIENTE_EXCLUIDO', "Cliente ID: $cliente_id excluído");
                     $sucesso = 'Cliente excluído com sucesso!';
@@ -129,7 +129,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
     <title>Gerenciar Clientes - Sistema de Acesso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <div class="container">
@@ -141,11 +141,11 @@ while ($cliente = $result_clientes->fetch_assoc()) {
             <main>
                 <h2>Gerenciar Clientes</h2>
                 
-                <?php if (!empty($erro)): ?>
+                <?php if (!empty($erro)) : ?>
                     <div class="alert alert-danger"><?php echo $erro; ?></div>
                 <?php endif; ?>
                 
-                <?php if (!empty($sucesso)): ?>
+                <?php if (!empty($sucesso)) : ?>
                     <div class="alert alert-success"><?php echo $sucesso; ?></div>
                 <?php endif; ?>
                 
@@ -174,9 +174,9 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                 <div class="panel-section">
                     <h3>Lista de Clientes</h3>
                     
-                    <?php if (empty($clientes)): ?>
+                    <?php if (empty($clientes)) : ?>
                         <div class="alert alert-info">Nenhum cliente encontrado. Adicione um novo cliente.</div>
-                    <?php else: ?>
+                    <?php else : ?>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover data-table">
                                 <thead>
@@ -190,20 +190,20 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($clientes as $cliente): ?>
+                                    <?php foreach ($clientes as $cliente) : ?>
                                     <tr>
                                         <!--<td data-label="Nome:"><?php echo $cliente['nome']; ?></td>-->
                                         <td data-label="Empresa:"><?php echo $cliente['empresa'] ?: '-'; ?></td>
                                         <!--<td data-label="Email:"><?php echo $cliente['email'] ?: '-'; ?></td>-->
                                         <td data-label="Telefone:">        
-											<a href="https://wa.me/55<?php echo preg_replace('/[^0-9]/', '', $cliente['telefone']); ?>" 
-											   target="_blank" 
-											   class="whatsapp-link" 
-											   title="Abrir WhatsApp">
-												<i class="bi bi-whatsapp text-success me-1"></i>
-												<?php echo $cliente['telefone']; ?>
-											</a>
-										</td>
+                                            <a href="https://wa.me/55<?php echo preg_replace('/[^0-9]/', '', $cliente['telefone']); ?>" 
+                                               target="_blank" 
+                                               class="whatsapp-link" 
+                                               title="Abrir WhatsApp">
+                                                <i class="bi bi-whatsapp text-success me-1"></i>
+                                                <?php echo $cliente['telefone']; ?>
+                                            </a>
+                                        </td>
                                         <!--<td data-label="Data de Cadastro:"><?php echo date('d/m/Y', strtotime($cliente['data_cadastro'])); ?></td>-->
                                         <td data-label="Ações:" class="actions">
                                             <!-- Botão Ver Detalhes -->
@@ -463,7 +463,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
     </div>
     
     <script src="../assets/js/script.js"></script>
-	<script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Script para inicializar modais e gerenciar dados

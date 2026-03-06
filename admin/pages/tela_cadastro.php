@@ -16,7 +16,8 @@ if (!isset($_GET['modulo_id']) || !is_numeric($_GET['modulo_id'])) {
 $modulo_id = intval($_GET['modulo_id']);
 
 // Função para obter detalhes do módulo
-function getModuloDetalhes($conn, $id_seq) {
+function getModuloDetalhes($conn, $id_seq)
+{
     $sql = "SELECT m.*, p.id as projeto_id, p.nome as projeto_nome 
             FROM modulos m
             JOIN projetos p ON m.projeto_id = p.id
@@ -126,9 +127,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php include '../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -145,10 +146,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p class="mb-0">Projeto: <?php echo htmlspecialchars($modulo['projeto_nome']); ?></p>
                 </div>
 
-                <?php if (!empty($erros)): ?>
+                <?php if (!empty($erros)) : ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <ul class="mb-0">
-                        <?php foreach ($erros as $erro): ?>
+                        <?php foreach ($erros as $erro) : ?>
                             <li><?php echo $erro; ?></li>
                         <?php endforeach; ?>
                     </ul>

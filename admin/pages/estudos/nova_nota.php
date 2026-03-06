@@ -64,7 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Função para reordenar array de arquivos
-function reordenarArrayArquivos($arquivos_array) {
+function reordenarArrayArquivos($arquivos_array)
+{
     $arquivos = [];
     $total = count($arquivos_array['name']);
 
@@ -97,9 +98,9 @@ ob_end_flush();
         <?php include '../../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -114,10 +115,10 @@ ob_end_flush();
 
                 <h2>Nova Nota</h2>
 
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                     <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?>">
-                        <?php 
-                        echo $_SESSION['mensagem']; 
+                        <?php
+                        echo $_SESSION['mensagem'];
                         unset($_SESSION['mensagem']);
                         unset($_SESSION['tipo_mensagem']);
                         ?>

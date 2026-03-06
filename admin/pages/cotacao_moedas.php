@@ -6,10 +6,10 @@ require_once '../config/auth.php';
 
 /**
  * Página de Cotação de Moedas
- * 
+ *
  * Esta página permite a inserção das cotações de Euro, Libra e Dólar,
  * e calcula as conversões da moeda selecionada para as outras moedas.
- * 
+ *
  * PHP 8.x
  */
 
@@ -35,46 +35,48 @@ $resultado = null;
 // Processar formulário quando enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validação e sanitização dos dados
-    $euro_rate = isset($_POST['euro_rate']) && !empty($_POST['euro_rate']) ? 
+    $euro_rate = isset($_POST['euro_rate']) && !empty($_POST['euro_rate']) ?
         filter_var($_POST['euro_rate'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : $default_euro_rate;
-    
-    $libra_rate = isset($_POST['libra_rate']) && !empty($_POST['libra_rate']) ? 
+
+    $libra_rate = isset($_POST['libra_rate']) && !empty($_POST['libra_rate']) ?
         filter_var($_POST['libra_rate'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : $default_libra_rate;
-    
-    $dolar_rate = isset($_POST['dolar_rate']) && !empty($_POST['dolar_rate']) ? 
+
+    $dolar_rate = isset($_POST['dolar_rate']) && !empty($_POST['dolar_rate']) ?
         filter_var($_POST['dolar_rate'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : $default_dolar_rate;
-    
-    $valor_converter = isset($_POST['valor_converter']) && !empty($_POST['valor_converter']) ? 
+
+    $valor_converter = isset($_POST['valor_converter']) && !empty($_POST['valor_converter']) ?
         filter_var($_POST['valor_converter'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0;
-    
-    $moeda_origem = isset($_POST['moeda_origem']) ? 
+
+    $moeda_origem = isset($_POST['moeda_origem']) ?
         htmlspecialchars($_POST['moeda_origem']) : 'real';
-    
+
     // Salvar os valores na sessão
     $_SESSION['cotacao_euro_rate'] = $euro_rate;
     $_SESSION['cotacao_libra_rate'] = $libra_rate;
     $_SESSION['cotacao_dolar_rate'] = $dolar_rate;
     $_SESSION['cotacao_valor_converter'] = $valor_converter;
     $_SESSION['cotacao_moeda_origem'] = $moeda_origem;
-    
+
     // Verificar se todos os campos necessários foram preenchidos
     if ($euro_rate > 0 && $libra_rate > 0 && $dolar_rate > 0 && $valor_converter > 0) {
         // Calcular conversões
         $resultado = calcularCotacoes($euro_rate, $libra_rate, $dolar_rate, $valor_converter, $moeda_origem);
-        
+
         // Salvar o resultado na sessão para possível uso posterior
         $_SESSION['cotacao_resultado'] = $resultado;
     }
-} else if (isset($_SESSION['cotacao_resultado']) && 
-           isset($_SESSION['cotacao_valor_converter']) && 
-           $_SESSION['cotacao_valor_converter'] > 0) {
+} elseif (
+    isset($_SESSION['cotacao_resultado']) &&
+           isset($_SESSION['cotacao_valor_converter']) &&
+           $_SESSION['cotacao_valor_converter'] > 0
+) {
     // Recuperar resultado da sessão caso exista e a página seja recarregada
     $resultado = $_SESSION['cotacao_resultado'];
 }
 
 /**
  * Realiza os cálculos de conversão da moeda selecionada para as outras moedas
- * 
+ *
  * @param float $euro_rate Taxa de conversão do Euro para Real
  * @param float $libra_rate Taxa de conversão da Libra para Real
  * @param float $dolar_rate Taxa de conversão do Dólar para Real
@@ -82,13 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  * @param string $moeda_origem Moeda de origem para conversão
  * @return array Array contendo as conversões calculadas
  */
-function calcularCotacoes($euro_rate, $libra_rate, $dolar_rate, $valor_converter, $moeda_origem) {
+function calcularCotacoes($euro_rate, $libra_rate, $dolar_rate, $valor_converter, $moeda_origem)
+{
     $conversoes = [];
     $valor_moeda_origem = $valor_converter;
-    
+
     // Converter o valor para real primeiro (base comum)
     $valor_em_real = $valor_converter;
-    
+
     switch ($moeda_origem) {
         case 'euro':
             $valor_em_real = $valor_converter * $euro_rate;
@@ -105,24 +108,24 @@ function calcularCotacoes($euro_rate, $libra_rate, $dolar_rate, $valor_converter
             $valor_em_real = $valor_converter;
             break;
     }
-    
+
     // Agora converter de real para cada moeda
     if ($moeda_origem !== 'real') {
         $conversoes['para_real'] = $valor_em_real;
     }
-    
+
     if ($moeda_origem !== 'euro') {
         $conversoes['para_euro'] = $valor_em_real / $euro_rate;
     }
-    
+
     if ($moeda_origem !== 'libra') {
         $conversoes['para_libra'] = $valor_em_real / $libra_rate;
     }
-    
+
     if ($moeda_origem !== 'dolar') {
         $conversoes['para_dolar'] = $valor_em_real / $dolar_rate;
     }
-    
+
     return [
         'conversoes' => $conversoes,
         'valor_origem' => $valor_moeda_origem,
@@ -136,22 +139,34 @@ function calcularCotacoes($euro_rate, $libra_rate, $dolar_rate, $valor_converter
 }
 
 // Função para obter o símbolo da moeda
-function getSimboloMoeda($moeda) {
+function getSimboloMoeda($moeda)
+{
     switch ($moeda) {
-        case 'euro': return '€';
-        case 'libra': return '£';
-        case 'dolar': return '$';
-        case 'real': default: return 'R$';
+        case 'euro':
+            return '€';
+        case 'libra':
+            return '£';
+        case 'dolar':
+            return '$';
+        case 'real':
+        default:
+            return 'R$';
     }
 }
 
 // Função para obter o nome da moeda
-function getNomeMoeda($moeda) {
+function getNomeMoeda($moeda)
+{
     switch ($moeda) {
-        case 'euro': return 'Euro';
-        case 'libra': return 'Libra';
-        case 'dolar': return 'Dólar';
-        case 'real': default: return 'Real';
+        case 'euro':
+            return 'Euro';
+        case 'libra':
+            return 'Libra';
+        case 'dolar':
+            return 'Dólar';
+        case 'real':
+        default:
+            return 'Real';
     }
 }
 ?>
@@ -194,8 +209,8 @@ function getNomeMoeda($moeda) {
         .conversion-highlight {
             font-weight: bold;
             color: var(--primary-color);
-			vertical-align: middle;
-			text-align: center;
+            vertical-align: middle;
+            text-align: center;
         }
         
         .panel-section {
@@ -227,9 +242,9 @@ function getNomeMoeda($moeda) {
         <?php include '../includes/header.php'; ?>
         
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>    
             <?php endif; ?>
             
@@ -291,19 +306,19 @@ function getNomeMoeda($moeda) {
                     </form>
                 </div>
                 
-                <?php if ($resultado): ?>
+                <?php if ($resultado) : ?>
                 <div class="panel-section">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <h4>Conversões de <?php echo getNomeMoeda($resultado['moeda_origem']); ?> para outras moedas</h4>
                                 <ul class="list-group">
-                                    <?php foreach ($resultado['conversoes'] as $moeda => $valor): ?>
+                                    <?php foreach ($resultado['conversoes'] as $moeda => $valor) : ?>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                             <?php 
+                                             <?php
                                                 $destino = str_replace('para_', '', $moeda);
 
-                                            ?>
+                                                ?>
                                             <span class="conversion-highlight">
                                                 <?php echo getSimboloMoeda($destino) . ' ' . number_format($valor, 2, ',', '.'); ?>
                                             </span>

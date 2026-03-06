@@ -24,9 +24,9 @@ $cadernos = buscarCadernos($conn, $_SESSION['usuario_id']);
         <?php include '../../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -38,10 +38,10 @@ $cadernos = buscarCadernos($conn, $_SESSION['usuario_id']);
                     </a>
                 </div>
 
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                     <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?>">
-                        <?php 
-                        echo $_SESSION['mensagem']; 
+                        <?php
+                        echo $_SESSION['mensagem'];
                         unset($_SESSION['mensagem']);
                         unset($_SESSION['tipo_mensagem']);
                         ?>
@@ -49,14 +49,14 @@ $cadernos = buscarCadernos($conn, $_SESSION['usuario_id']);
                 <?php endif; ?>
 
                 <div class="row">
-                    <?php if (empty($cadernos)): ?>
+                    <?php if (empty($cadernos)) : ?>
                         <div class="col-12">
                             <div class="alert alert-info">
                                 <p>Você ainda não possui cadernos. Clique em "Novo Caderno" para começar.</p>
                             </div>
                         </div>
-                    <?php else: ?>
-                        <?php foreach ($cadernos as $caderno): ?>
+                    <?php else : ?>
+                        <?php foreach ($cadernos as $caderno) : ?>
                             <div class="col-md-4 mb-4">
                                 <div class="card h-100">
                                     <div class="card-body">

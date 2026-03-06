@@ -1,4 +1,5 @@
 <?php
+
 ob_start();
 require_once '../../config/auth.php';
 require_once '../../config/estudos.php';
@@ -47,4 +48,3 @@ if ($resultado) {
 header("Location: notas.php?caderno_id=" . $caderno_id);
 exit;
 ob_end_flush();
-?>

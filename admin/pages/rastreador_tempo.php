@@ -23,16 +23,16 @@ while ($tarefa = $result_tarefas->fetch_assoc()) {
 $csrf_token = gerarTokenCSRF();
 
 
-/* $sql = "SELECT id, nome FROM tarefas WHERE 
-        usuario_id = ? AND 
-        status != 'concluido' AND 
+/* $sql = "SELECT id, nome FROM tarefas WHERE
+        usuario_id = ? AND
+        status != 'concluido' AND
         status != 'esperando'";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $usuario_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$tarefas = []; 
+$tarefas = [];
 
 
 while ($row = $result->fetch_assoc()) {
@@ -165,7 +165,7 @@ while ($row = $result->fetch_assoc()) {
                 <label for="tarefa" class="form-label">Selecione a Tarefa:</label>
                 <select class="form-select" id="tarefa" required>
                     <option value="">Escolha uma tarefa</option>
-                    <?php foreach ($tarefas as $tarefa): ?>
+                    <?php foreach ($tarefas as $tarefa) : ?>
                         <option value="<?= $tarefa['id'] ?>"><?= sprintf("%03d", $tarefa['id']) . " | " . htmlspecialchars($tarefa['nome']) ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -365,7 +365,7 @@ while ($row = $result->fetch_assoc()) {
                         cronometroAtivo = true;
                         registroId = data.registro_id;
                         /* segundosTotais = data.segundos_totais; */
-						segundosTotais = 0;
+                        segundosTotais = 0;
                         
                         // Selecionar a tarefa correspondente
                         tarefaSelect.value = data.tarefa_id;

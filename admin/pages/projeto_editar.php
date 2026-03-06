@@ -16,7 +16,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $projeto_id = intval($_GET['id']);
 
 // Função para obter detalhes do projeto
-function getProjetoDetalhes($conn, $id_seq) {
+function getProjetoDetalhes($conn, $id_seq)
+{
     $sql = "SELECT * FROM projetos WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_seq);
@@ -125,9 +126,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php include '../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -139,10 +140,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </a>
                 </div>
 
-                <?php if (!empty($erros)): ?>
+                <?php if (!empty($erros)) : ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <ul class="mb-0">
-                        <?php foreach ($erros as $erro): ?>
+                        <?php foreach ($erros as $erro) : ?>
                             <li><?php echo $erro; ?></li>
                         <?php endforeach; ?>
                     </ul>

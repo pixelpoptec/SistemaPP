@@ -44,9 +44,9 @@ $notas = buscarNotas($conn, $caderno_id, $_SESSION['usuario_id']);
         <?php include '../../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -65,23 +65,23 @@ $notas = buscarNotas($conn, $caderno_id, $_SESSION['usuario_id']);
                     </a>
                 </div>
 
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                     <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?>">
-                        <?php 
-                        echo $_SESSION['mensagem']; 
+                        <?php
+                        echo $_SESSION['mensagem'];
                         unset($_SESSION['mensagem']);
                         unset($_SESSION['tipo_mensagem']);
                         ?>
                     </div>
                 <?php endif; ?>
 
-                <?php if (empty($notas)): ?>
+                <?php if (empty($notas)) : ?>
                     <div class="alert alert-info">
                         <p>Este caderno ainda não possui notas. Clique em "Nova Nota" para começar.</p>
                     </div>
-                <?php else: ?>
+                <?php else : ?>
                     <div class="accordion" id="accordionNotas">
-                        <?php foreach ($notas as $index => $nota): ?>
+                        <?php foreach ($notas as $index => $nota) : ?>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading<?php echo $nota['id']; ?>">
                                     <button class="accordion-button <?php echo ($index > 0) ? 'collapsed' : ''; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $nota['id']; ?>" aria-expanded="<?php echo ($index === 0) ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $nota['id']; ?>">

@@ -6,7 +6,8 @@ require_once '../config/functions.php';
 verificaLogin();
 
 // Função para listar todos os projetos
-function listarProjetos($conn) {
+function listarProjetos($conn)
+{
     $sql = "SELECT p.*, COUNT(DISTINCT m.id) AS total_modulos 
             FROM projetos p 
             LEFT JOIN modulos m ON p.id = m.projeto_id 
@@ -107,9 +108,9 @@ $projetos = listarProjetos($conn);
         <?php include '../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -121,33 +122,44 @@ $projetos = listarProjetos($conn);
                     </a>
                 </div>
 
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                 <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?> alert-dismissible fade show" role="alert">
                     <?php echo $_SESSION['mensagem']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <?php 
+                    <?php
                     unset($_SESSION['mensagem']);
                     unset($_SESSION['tipo_mensagem']);
-                endif; 
+                endif;
                 ?>
 
                 <div class="row">
-                    <?php if (count($projetos) > 0): ?>
-                        <?php foreach ($projetos as $projeto): ?>
+                    <?php if (count($projetos) > 0) : ?>
+                        <?php foreach ($projetos as $projeto) : ?>
                             <div class="col-md-6 col-lg-4">
                                 <div class="card projeto-card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="mb-0"><?php echo htmlspecialchars($projeto['nome']); ?></h5>
-                                        <span class="badge bg-<?php 
-                                            switch($projeto['status']) {
-                                                case 'Em planejamento': echo 'secondary'; break;
-                                                case 'Em desenvolvimento': echo 'primary'; break;
-                                                case 'Em teste': echo 'warning'; break;
-                                                case 'Concluído': echo 'success'; break;
-                                                case 'Pausado': echo 'danger'; break;
-                                                default: echo 'info';
-                                            }
+                                        <span class="badge bg-<?php
+                                        switch ($projeto['status']) {
+                                            case 'Em planejamento':
+                                                    echo 'secondary';
+                                                break;
+                                            case 'Em desenvolvimento':
+                                                    echo 'primary';
+                                                break;
+                                            case 'Em teste':
+                                                    echo 'warning';
+                                                break;
+                                            case 'Concluído':
+                                                    echo 'success';
+                                                break;
+                                            case 'Pausado':
+                                                    echo 'danger';
+                                                break;
+                                            default:
+                                                    echo 'info';
+                                        }
                                         ?> status-badge"><?php echo $projeto['status']; ?></span>
                                     </div>
                                     <div class="card-body">
@@ -173,7 +185,7 @@ $projetos = listarProjetos($conn);
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                    <?php else: ?>
+                    <?php else : ?>
                         <div class="col-12">
                             <div class="alert alert-info">
                                 Nenhum projeto cadastrado. <a href="projeto_cadastro.php" class="alert-link">Clique aqui</a> para criar um novo projeto.

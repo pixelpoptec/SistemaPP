@@ -1,4 +1,5 @@
 <?php
+
 ob_start();
 require_once '../../config/auth.php';
 require_once '../../config/estudos.php';
@@ -41,4 +42,3 @@ if ($resultado) {
 header("Location: cadernos.php");
 exit;
 ob_end_flush();
-?>
