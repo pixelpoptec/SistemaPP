@@ -53,8 +53,10 @@ jobs:
           | xargs -I {} php -l {}
         echo "Todos os arquivos PHP estão válidos"
         
-    - name: Instalar PHPMD (PHP Mess Detector)
-      run: composer global require phpmd/phpmd
+    - name: Instalar PHPMD
+      run: |
+        composer global require phpmd/phpmd
+        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
     - name: Analisar qualidade do código
       run: |
@@ -63,13 +65,15 @@ jobs:
           --suffixes php
 
     - name: Instalar PHP_CodeSniffer
-      run: composer global require squizlabs/php_codesniffer
+      run: |
+        composer global require squizlabs/php_codesniffer
+        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
     - name: Verificar padrão de código (PSR-12)
       run: |
         phpcs --standard=PSR12 \
           --ignore=vendor,PHPMailer \
-          --extensions=php .        
+          --extensions=php .     
 
     - name: Publicação via SSH para HostGator
       env:
