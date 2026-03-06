@@ -53,6 +53,7 @@ class Notification {
      * Verifica se existe uma notificação pendente
      * 
      * @return bool
+	 * @SuppressWarnings(PHPMD.Superglobals)
      */
     public static function exists() {
         // Inicia a sessão se ainda não estiver ativa
