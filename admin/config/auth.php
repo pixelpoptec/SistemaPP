@@ -28,33 +28,32 @@ function verificaLogin() {
  * @SuppressWarnings(PHPMD.ExitExpression)
  */
 function verificaPermissao($permissao) {
-    // Verificar login primeiro
     verificaLogin();
-    
+
     $usuario_id = $_SESSION['usuario_id'];
     global $conn;
-    
+
     $sql = "SELECT p.nome FROM permissoes p
             JOIN grupo_permissao gp ON p.id = gp.permissao_id
             JOIN usuario_grupo ug ON gp.grupo_id = ug.grupo_id
             WHERE ug.usuario_id = ? AND p.nome = ?";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("is", $usuario_id, $permissao);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
+    // Early return — sai imediatamente se tem permissão
     if ($result->num_rows > 0) {
         return true;
-    } else {
-        // Registrar tentativa de acesso não autorizado
-        registrarLog($usuario_id, 'PERMISSAO_NEGADA', 
-                    "Tentativa de acesso à funcionalidade restrita: $permissao");
-        
-        // Redirecionar para página de acesso negado
-        header('Location: /pp-files/admin/index.php?erro=acesso_negado');
-        exit();
     }
+
+    // Se chegou aqui, não tem permissão — sem else necessário
+    registrarLog($usuario_id, 'PERMISSAO_NEGADA', 
+                "Tentativa de acesso à funcionalidade restrita: $permissao");
+
+    header('Location: /pp-files/admin/index.php?erro=acesso_negado');
+    exit();
 }
 
 // Função para fazer login
@@ -81,7 +80,7 @@ function fazerLogin($email, $senha) {
 		//$valor_09 = $senha . " - " . $usuario['senha'];
 		//registrarLog($usuario['id'], 'VER SENHA', $valor_09);
 		
-		$senha_teste = "47Favoritos5$";
+		//$senha_teste = "3333333$";
 		//$hash_teste = password_hash($senha_teste, PASSWORD_DEFAULT);
 		
         // Verificar senha com password_verify (bcrypt)
