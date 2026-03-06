@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <?php if (!empty($erro)): ?>
             <div class="alert alert-danger"><?php echo $erro; ?></div>
-        <php endif; ?>
+        <?php endif; ?>
         
         <?php if (isset($_GET['erro']) && $_GET['erro'] === 'login_necessario'): ?>
             <div class="alert alert-warning">Você precisa fazer login para acessar esta página.</div>
