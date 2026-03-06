@@ -3,11 +3,11 @@
 function registrarLog($usuario_id, $acao, $detalhes = '') {
     global $conn;
     
-    $ip = $_SERVER['REMOTE_ADDR'];
+    $ip_server = $_SERVER['REMOTE_ADDR'];
     
     $sql = "INSERT INTO logs_acesso (usuario_id, ip, acao, detalhes) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isss", $usuario_id, $ip, $acao, $detalhes);
+    $stmt->bind_param("isss", $usuario_id, $ip_server, $acao, $detalhes);
     $stmt->execute();
 }
 

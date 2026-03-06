@@ -184,7 +184,7 @@ function generateQRCode($data) {
         $base64 = 'data:image/png;base64,' . base64_encode($imageData);
         
         // Remove o arquivo temporário
-        @unlink($fileName);
+        unlink($fileName);
         
         return $base64;
     }
