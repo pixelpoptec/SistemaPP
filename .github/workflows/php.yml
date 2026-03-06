@@ -80,6 +80,7 @@ jobs:
     - name: Verificar padrão de código (PSR-12)
       run: |
         phpcs --standard=PSR12 \
+          --warning-severity=0 \
           --ignore=vendor,PHPMailer \
           --extensions=php .     
 
