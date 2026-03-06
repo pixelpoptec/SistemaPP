@@ -46,7 +46,7 @@ function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_u
     // Custo fixo
     $total_horas_mes = $config['dias_mes'] * $config['horas_dia'];
     $custo_fixo_hora = $config['custo_fixo_mensal'] / $total_horas_mes;
-	//@SuppressWarnings(PHPMD.Superglobals)
+	// @phpmd suppress SuperGlobals
     $custo_fixo_impressora = $custo_fixo_hora * $config['perc_uso_impressora'];
     $custo_fixo_total = $custo_fixo_impressora * $tempo_horas;
     
@@ -67,7 +67,9 @@ function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_u
     $lucro_padrao = $preco_consumidor - $custo_producao - (($tempo_horas * $config['imposto']) / $qtd_pecas);
     
     // Lucro líquido
+	// @phpmd suppress SuperGlobals
     $lucro_liquido = $lucro_padrao - ($preco_consumidor * $config['tx_cartao']) - ($preco_consumidor * $config['custo_anuncio']);
+	// @phpmd suppress SuperGlobals
     $lucro_liquido_porcentagem = $lucro_liquido / $preco_consumidor;
     
     // Valor total
