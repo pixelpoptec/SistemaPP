@@ -46,6 +46,7 @@ function calcularPreco($conn, $hora, $minuto, $peso_g, $qtd_pecas, $acessorios_u
     // Custo fixo
     $total_horas_mes = $config['dias_mes'] * $config['horas_dia'];
     $custo_fixo_hora = $config['custo_fixo_mensal'] / $total_horas_mes;
+	//@SuppressWarnings(PHPMD.Superglobals)
     $custo_fixo_impressora = $custo_fixo_hora * $config['perc_uso_impressora'];
     $custo_fixo_total = $custo_fixo_impressora * $tempo_horas;
     
