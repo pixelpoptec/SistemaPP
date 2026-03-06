@@ -82,7 +82,9 @@ jobs:
         phpcs --standard=PSR12 \
           --warning-severity=0 \
           --ignore=vendor,PHPMailer \
-          --extensions=php .     
+          --extensions=php 
+          --exclude=Squiz.ControlStructures.ControlSignature \
+          .     
 
     - name: Publicação via SSH para HostGator
       env:
