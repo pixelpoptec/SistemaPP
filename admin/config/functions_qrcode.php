@@ -90,13 +90,11 @@ function calculateCRC16($str) {
     for ($c = 0; $c < $strlen; $c++) {
         $crc ^= ord(substr($str, $c, 1)) << 8;
 
-        for ($i = 0; $i < 8; $i++) {
-            if ($crc & 0x8000) {
-                $crc = ($crc << 1) ^ 0x1021;  // ← corrigido
-            } else {
-                $crc = $crc << 1;
-            }
-        }
+		for ($i = 0; $i < 8; $i++) {
+			$crc = ($crc & 0x8000)
+				? ($crc << 1) ^ 0x1021
+				: $crc << 1;
+		}
     }
 
     return $crc & 0xFFFF;
