@@ -2,7 +2,8 @@
 require_once '../config/auth.php';
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use chillerlan\QRCode\{QRCode, QROptions};
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use chillerlan\QRCode\Common\EccLevel;
 
 // Verificar se o usuário está logado
@@ -147,7 +148,7 @@ function calculateCRC16($str) {
  */
 function generateQRCode($data) {
     // Se você estiver usando a biblioteca chillerlan/php-qrcode
-    if (class_exists('chillerlan\php-qrcode\QRCode')) {
+    if (class_exists('chillerlan\QRCode\QRCode')) {
         
 		$arquivo = 'arquivo_' . date('Ymd_His') . '.txt';;
 		$conteudo = 'tem classe chillerlan\php-qrcode\QRCode';
@@ -166,7 +167,7 @@ function generateQRCode($data) {
     }
     
     // Alternativa usando a biblioteca PHP QR Code (se a chillerlan não estiver disponível)
-    if (!class_exists('chillerlan\php-qrcode\QRCode')) {
+    if (class_exists('chillerlan\QRCode\QRCode')) {
 
 		// Caminho para a biblioteca PHP QR Code
         require_once 'lib/phpqrcode/qrlib.php';
