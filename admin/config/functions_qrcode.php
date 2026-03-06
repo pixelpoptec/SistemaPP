@@ -178,7 +178,8 @@ function generateQRCode($data) {
         $fileName .= '.png';
         
         // Gera o QR Code
-        \QRcode::png($data, $fileName, 'L', 10, 2);
+		$qrcode = new \QRcode();
+        $qrcode->png($data, $fileName, 'L', 10, 2);
         
         // Converte para base64
         $imageData = file_get_contents($fileName);
