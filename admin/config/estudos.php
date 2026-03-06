@@ -1,8 +1,10 @@
 <?php
+
 // Funções para o sistema de gerenciamento de estudos
 
 // Buscar todos os cadernos de um usuário
-function buscarCadernos($conn, $usuario_id) {
+function buscarCadernos($conn, $usuario_id)
+{
     $sql = "SELECT * FROM cadernos WHERE usuario_id = ? ORDER BY titulo ASC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $usuario_id);
@@ -18,7 +20,8 @@ function buscarCadernos($conn, $usuario_id) {
 }
 
 // Buscar um caderno específico
-function buscarCaderno($conn, $id_seq, $usuario_id) {
+function buscarCaderno($conn, $id_seq, $usuario_id)
+{
     $sql = "SELECT * FROM cadernos WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $id_seq, $usuario_id);
@@ -29,7 +32,8 @@ function buscarCaderno($conn, $id_seq, $usuario_id) {
 }
 
 // Criar um novo caderno
-function criarCaderno($conn, $titulo, $usuario_id) {
+function criarCaderno($conn, $titulo, $usuario_id)
+{
     $sql = "INSERT INTO cadernos (titulo, usuario_id) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("si", $titulo, $usuario_id);
@@ -42,7 +46,8 @@ function criarCaderno($conn, $titulo, $usuario_id) {
 }
 
 // Atualizar um caderno
-function atualizarCaderno($conn, $id_seq, $titulo, $usuario_id) {
+function atualizarCaderno($conn, $id_seq, $titulo, $usuario_id)
+{
     $sql = "UPDATE cadernos SET titulo = ? WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sii", $titulo, $id_seq, $usuario_id);
@@ -51,7 +56,8 @@ function atualizarCaderno($conn, $id_seq, $titulo, $usuario_id) {
 }
 
 // Excluir um caderno
-function excluirCaderno($conn, $id_seq, $usuario_id) {
+function excluirCaderno($conn, $id_seq, $usuario_id)
+{
     $sql = "DELETE FROM cadernos WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $id_seq, $usuario_id);
@@ -60,7 +66,8 @@ function excluirCaderno($conn, $id_seq, $usuario_id) {
 }
 
 // Buscar todas as notas de um caderno
-function buscarNotas($conn, $caderno_id, $usuario_id) {
+function buscarNotas($conn, $caderno_id, $usuario_id)
+{
     $sql = "SELECT * FROM notas WHERE caderno_id = ? AND usuario_id = ? ORDER BY data_atualizacao DESC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $caderno_id, $usuario_id);
@@ -76,7 +83,8 @@ function buscarNotas($conn, $caderno_id, $usuario_id) {
 }
 
 // Buscar uma nota específica
-function buscarNota($conn, $id_seq, $usuario_id) {
+function buscarNota($conn, $id_seq, $usuario_id)
+{
     $sql = "SELECT n.*, c.titulo as caderno_titulo 
             FROM notas n 
             JOIN cadernos c ON n.caderno_id = c.id 
@@ -90,7 +98,8 @@ function buscarNota($conn, $id_seq, $usuario_id) {
 }
 
 // Criar uma nova nota
-function criarNota($conn, $titulo, $conteudo, $caderno_id, $usuario_id) {
+function criarNota($conn, $titulo, $conteudo, $caderno_id, $usuario_id)
+{
     $sql = "INSERT INTO notas (titulo, conteudo, caderno_id, usuario_id) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssii", $titulo, $conteudo, $caderno_id, $usuario_id);
@@ -103,7 +112,8 @@ function criarNota($conn, $titulo, $conteudo, $caderno_id, $usuario_id) {
 }
 
 // Atualizar uma nota
-function atualizarNota($conn, $id_seq, $titulo, $conteudo, $caderno_id, $usuario_id) {
+function atualizarNota($conn, $id_seq, $titulo, $conteudo, $caderno_id, $usuario_id)
+{
     $sql = "UPDATE notas SET titulo = ?, conteudo = ?, caderno_id = ? WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssiii", $titulo, $conteudo, $caderno_id, $id_seq, $usuario_id);
@@ -112,7 +122,8 @@ function atualizarNota($conn, $id_seq, $titulo, $conteudo, $caderno_id, $usuario
 }
 
 // Excluir uma nota
-function excluirNota($conn, $id_seq, $usuario_id) {
+function excluirNota($conn, $id_seq, $usuario_id)
+{
     $sql = "DELETE FROM notas WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $id_seq, $usuario_id);
@@ -121,7 +132,8 @@ function excluirNota($conn, $id_seq, $usuario_id) {
 }
 
 // Buscar arquivos de uma nota
-function buscarArquivos($conn, $nota_id, $usuario_id) {
+function buscarArquivos($conn, $nota_id, $usuario_id)
+{
     $sql = "SELECT * FROM arquivos WHERE nota_id = ? AND usuario_id = ? ORDER BY data_upload DESC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $nota_id, $usuario_id);
@@ -137,7 +149,8 @@ function buscarArquivos($conn, $nota_id, $usuario_id) {
 }
 
 // Salvar arquivo
-function salvarArquivo($conn, $arquivo, $nota_id, $usuario_id) {
+function salvarArquivo($conn, $arquivo, $nota_id, $usuario_id)
+{
     // Diretório para salvar os arquivos
     $diretorio = "../uploads/estudos/";
 
@@ -155,12 +168,13 @@ function salvarArquivo($conn, $arquivo, $nota_id, $usuario_id) {
         // Salvar informações do arquivo no banco de dados
         $sql = "INSERT INTO arquivos (nome, tipo, tamanho, caminho, nota_id, usuario_id) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssissi", 
-            $arquivo['name'], 
-            $arquivo['type'], 
-            $arquivo['size'], 
-            $nome_arquivo, 
-            $nota_id, 
+        $stmt->bind_param(
+            "ssissi",
+            $arquivo['name'],
+            $arquivo['type'],
+            $arquivo['size'],
+            $nome_arquivo,
+            $nota_id,
             $usuario_id
         );
 
@@ -173,7 +187,8 @@ function salvarArquivo($conn, $arquivo, $nota_id, $usuario_id) {
 }
 
 // Excluir arquivo
-function excluirArquivo($conn, $id_seq, $usuario_id) {
+function excluirArquivo($conn, $id_seq, $usuario_id)
+{
     // Buscar informações do arquivo
     $sql = "SELECT * FROM arquivos WHERE id = ? AND usuario_id = ?";
     $stmt = $conn->prepare($sql);
@@ -201,7 +216,8 @@ function excluirArquivo($conn, $id_seq, $usuario_id) {
 }
 
 // Renderizar formatação Markdown-like
-function renderizarFormatacao($texto) {
+function renderizarFormatacao($texto)
+{
     // Substituir ** por <strong>
     $texto = preg_replace('/\*\*(.*?)\*\*/s', '<strong>$1</strong>', $texto);
 
@@ -216,5 +232,3 @@ function renderizarFormatacao($texto) {
 
     return $texto;
 }
-?>
-

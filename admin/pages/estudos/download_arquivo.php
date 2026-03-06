@@ -1,4 +1,5 @@
 <?php
+
 require_once '../../config/auth.php';
 require_once '../../config/estudos.php';
 
@@ -58,4 +59,3 @@ flush();
 // Ler o arquivo e enviá-lo para o navegador
 readfile($caminho_arquivo);
 exit;
-?>

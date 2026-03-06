@@ -23,7 +23,8 @@ $clienteId = isset($_GET['cliente_id']) ? intval($_GET['cliente_id']) : 0;
 $status = isset($_GET['status']) ? $_GET['status'] : '';
 
 // Função para gerar a consulta SQL baseada nos filtros
-function gerarConsultaSQL($dataInicio, $dataFim, $tipoData, $clienteId, $status) {
+function gerarConsultaSQL($dataInicio, $dataFim, $tipoData, $clienteId, $status)
+{
     $sql = "SELECT t.id, t.nome, t.detalhes, t.status, 
                   DATE_FORMAT(t.data_abertura, '%d/%m/%Y') as data_abertura, 
                   DATE_FORMAT(t.previsao_termino, '%d/%m/%Y') as previsao_termino, 
@@ -33,7 +34,7 @@ function gerarConsultaSQL($dataInicio, $dataFim, $tipoData, $clienteId, $status)
            FROM tarefas t
            LEFT JOIN clientes c ON t.cliente_id = c.id
            WHERE 1=1";
-    
+
     if (!empty($dataInicio) && !empty($dataFim)) {
         if ($tipoData == 'abertura') {
             $sql .= " AND t.data_abertura BETWEEN '$dataInicio' AND '$dataFim'";
@@ -43,17 +44,17 @@ function gerarConsultaSQL($dataInicio, $dataFim, $tipoData, $clienteId, $status)
             $sql .= " AND t.termino_efetivo BETWEEN '$dataInicio' AND '$dataFim'";
         }
     }
-    
+
     if ($clienteId > 0) {
         $sql .= " AND t.cliente_id = '$clienteId'";
     }
-    
+
     if (!empty($status)) {
         $sql .= " AND t.status = '$status'";
     }
-    
+
     $sql .= " ORDER BY t.data_abertura DESC";
-    
+
     return $sql;
 }
 
@@ -61,34 +62,34 @@ function gerarConsultaSQL($dataInicio, $dataFim, $tipoData, $clienteId, $status)
 $tarefas = [];
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && (isset($_GET['filtrar']) || isset($_GET['exportar']))) {
     $sql = gerarConsultaSQL($dataInicio, $dataFim, $tipoData, $clienteId, $status);
-	$result_tarefas = $conn->query($sql);
-	$tarefas = [];
+    $result_tarefas = $conn->query($sql);
+    $tarefas = [];
 
-	while ($tarefa = $result_tarefas->fetch_assoc()) {
-		$tarefas[] = $tarefa;
-	}	
+    while ($tarefa = $result_tarefas->fetch_assoc()) {
+        $tarefas[] = $tarefa;
+    }
 }
-/* 	$totalRegistros = "preenchida";
-	$botaoExportar = "não apertado";
-	if (empty($tarefas)) { $totalRegistros = "vazia"; }
-	if (isset($_GET['exportar'])) { $botaoExportar = "apertado"; }
-	//$totalRegistros = empty($tarefas);
-	$arquivo = 'arquivo_' . date('Ymd_His') . '.txt';;
-	$conteudo = $botaoExportar . " - " . $totalRegistros;
-	file_put_contents($arquivo, $conteudo); */
+/*  $totalRegistros = "preenchida";
+    $botaoExportar = "não apertado";
+    if (empty($tarefas)) { $totalRegistros = "vazia"; }
+    if (isset($_GET['exportar'])) { $botaoExportar = "apertado"; }
+    //$totalRegistros = empty($tarefas);
+    $arquivo = 'arquivo_' . date('Ymd_His') . '.txt';;
+    $conteudo = $botaoExportar . " - " . $totalRegistros;
+    file_put_contents($arquivo, $conteudo); */
 
 // Função para formatar tempo
-function formatarTempo($horas, $minutos) {
+function formatarTempo($horas, $minutos)
+{
     return sprintf("%02d:%02d", $horas, $minutos);
 }
 
 // Exportar para Excel
 if (isset($_GET['exportar']) && !empty($tarefas)) {
-    
-	$spreadsheet = new Spreadsheet();
+    $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->setTitle('Relatório de Tarefas');
-    
+
     // Estilo para o cabeçalho
     $headerStyle = [
         'font' => [
@@ -110,7 +111,7 @@ if (isset($_GET['exportar']) && !empty($tarefas)) {
             ],
         ],
     ];
-    
+
     // Estilo para as linhas
     $rowStyle = [
         'borders' => [
@@ -120,14 +121,14 @@ if (isset($_GET['exportar']) && !empty($tarefas)) {
             ],
         ],
     ];
-    
+
     // Definir cabeçalhos
     $headers = ['ID', 'Tarefa', 'Detalhes', 'Cliente', 'Abertura', 'Previsão', 'Conclusão', 'Status', 'Tempo'];
-    $sheet->fromArray($headers, NULL, 'A1');
-    
+    $sheet->fromArray($headers, null, 'A1');
+
     // Aplicar estilo ao cabeçalho
     $sheet->getStyle('A1:I1')->applyFromArray($headerStyle);
-    
+
     // Adicionar dados
     $row = 2;
     foreach ($tarefas as $tarefa) {
@@ -139,8 +140,8 @@ if (isset($_GET['exportar']) && !empty($tarefas)) {
         $sheet->setCellValue('F' . $row, $tarefa['previsao_termino']);
         $sheet->setCellValue('G' . $row, $tarefa['termino_efetivo']);
         $sheet->setCellValue('H' . $row, $tarefa['status']);
-		$sheet->setCellValue('I' . $row, formatarTempo($tarefa['tempo_horas'], $tarefa['tempo_minutos']));
-        
+        $sheet->setCellValue('I' . $row, formatarTempo($tarefa['tempo_horas'], $tarefa['tempo_minutos']));
+
         // Colorir linhas alternadas
         if ($row % 2 == 0) {
             $sheet->getStyle('A' . $row . ':I' . $row)->getFill()
@@ -151,32 +152,32 @@ if (isset($_GET['exportar']) && !empty($tarefas)) {
                 ->setFillType(Fill::FILL_SOLID)
                 ->getStartColor()->setRGB('FFF6EB');
         }
-        
+
         // Aplicar estilo às linhas
         $sheet->getStyle('I' . $row)->getNumberFormat()->setFormatCode('hh:mm');
-		$sheet->getStyle('A' . $row . ':I' . $row)->applyFromArray($rowStyle);
-		
-        
+        $sheet->getStyle('A' . $row . ':I' . $row)->applyFromArray($rowStyle);
+
+
         $row++;
     }
-    
+
     // Ajustar largura das colunas
-    foreach(range('A', 'I') as $column) {
+    foreach (range('A', 'I') as $column) {
         if ($column == 'C') {
-			$sheet->getColumnDimension($column)->setWidth(75);
-		} else {
-			$sheet->getColumnDimension($column)->setAutoSize(true);
-		}
+            $sheet->getColumnDimension($column)->setWidth(75);
+        } else {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
     }
-    
+
     // Criar o arquivo Excel
     $writer = new Xlsx($spreadsheet);
     $filename = 'relatorio_tarefas_' . date('Y-m-d_H-i-s') . '.xlsx';
-    
+
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
     header('Cache-Control: max-age=0');
-    
+
     $writer->save('php://output');
     exit;
 }
@@ -188,7 +189,7 @@ $result_clientes = $conn->query($sql_clientes);
 $clientes = [];
 
 while ($cliente = $result_clientes->fetch_assoc()) {
-	$clientes[] = $cliente;
+    $clientes[] = $cliente;
 }
 
 ?>
@@ -333,7 +334,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                 <label for="cliente_id" class="form-label">Cliente</label>
                                 <select class="form-select" id="cliente_id" name="cliente_id">
                                     <option value="0">Todos</option>
-                                    <?php foreach ($clientes as $cliente): ?>
+                                    <?php foreach ($clientes as $cliente) : ?>
                                         <option value="<?php echo $cliente['id']; ?>" <?php echo $clienteId == $cliente['id'] ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($cliente['nome']); ?>
                                         </option>
@@ -342,7 +343,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                             </div>
                             <div class="col-md-3 mt-4">
                                 <button type="submit" name="filtrar" value="1" class="btn btn-primary">Filtrar</button>
-                                <?php if (!empty($tarefas)): ?>
+                                <?php if (!empty($tarefas)) : ?>
                                     <button type="submit" name="exportar" value="1" class="btn btn-success ms-2">Exportar Excel</button>
                                 <?php endif; ?>
                             </div>
@@ -353,11 +354,11 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                 <div class="tabela-resultados">
                     <h3>Resultados</h3>
                     
-                    <?php if (empty($tarefas) && isset($_GET['filtrar'])): ?>
+                    <?php if (empty($tarefas) && isset($_GET['filtrar'])) : ?>
                         <div class="alert alert-info">Nenhum resultado encontrado para os filtros selecionados.</div>
-                    <?php elseif (!isset($_GET['filtrar'])): ?>
+                    <?php elseif (!isset($_GET['filtrar'])) : ?>
                         <div class="alert alert-info">Utilize os filtros acima para gerar o relatório.</div>
-                    <?php else: ?>
+                    <?php else : ?>
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -373,7 +374,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($tarefas as $tarefa): ?>
+                                    <?php foreach ($tarefas as $tarefa) : ?>
                                         <tr>
                                             <td><?php echo $tarefa['id']; ?></td>
                                             <td><?php echo htmlspecialchars($tarefa['nome']); ?></td>
@@ -383,15 +384,15 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                             <td><?php echo $tarefa['termino_efetivo']; ?></td>
                                             <td><?php echo formatarTempo($tarefa['tempo_horas'], $tarefa['tempo_minutos']); ?></td>
                                             <td>
-                                                <span class="badge bg-<?php 
-                                                    echo match($tarefa['status']) {
+                                                <span class="badge bg-<?php
+                                                    echo match ($tarefa['status']) {
                                                         'aberta' => 'primary',
                                                         'fazendo' => 'warning',
                                                         'esperando' => 'info',
                                                         'concluido' => 'success',
                                                         default => 'secondary'
                                                     };
-                                                ?>">
+    ?>">
                                                     <?php echo ucfirst($tarefa['status']); ?>
                                                 </span>
                                             </td>

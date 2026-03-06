@@ -14,7 +14,7 @@ verificaPermissao('admin_panel');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Sistema de Acesso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <div class="container">
@@ -35,11 +35,11 @@ verificaPermissao('admin_panel');
                         $sql_usuarios = "SELECT COUNT(*) as total FROM usuarios";
                         $sql_ativos = "SELECT COUNT(*) as total FROM usuarios WHERE ativo = 1";
                         $sql_logs = "SELECT COUNT(*) as total FROM logs_acesso";
-                        
+
                         $result_usuarios = $conn->query($sql_usuarios);
                         $result_ativos = $conn->query($sql_ativos);
                         $result_logs = $conn->query($sql_logs);
-                        
+
                         $total_usuarios = $result_usuarios->fetch_assoc()['total'];
                         $total_ativos = $result_ativos->fetch_assoc()['total'];
                         $total_logs = $result_logs->fetch_assoc()['total'];
@@ -63,7 +63,7 @@ verificaPermissao('admin_panel');
                         </div>
                     </div>
                     
-					<!--
+                    <!--
                     <div class="panel-section">
                         <h3>Últimos Acessos</h3>
                         <div class="table-responsive">
@@ -84,9 +84,9 @@ verificaPermissao('admin_panel');
                                             ORDER BY l.data_hora DESC
                                             LIMIT 10";
                                     $result = $conn->query($sql);
-                                    
-                                    while ($log = $result->fetch_assoc()):
-                                    ?>
+
+                                    while ($log = $result->fetch_assoc()) :
+                                        ?>
                                     <tr>
                                         <td data-label="Usuário:"><?php echo $log['usuario_nome'] ?? 'Anônimo'; ?></td>
                                         <td data-label="Ação:"><?php echo $log['acao']; ?></td>
@@ -98,13 +98,13 @@ verificaPermissao('admin_panel');
                             </table>
                         </div>
                     </div>
-					
+                    
                     
                     <div class="panel-actions">
                         <a href="../pages/gerenciar_usuarios.php" class="btn btn-primary">Gerenciar Usuários</a>
                         <a href="../pages/relatorios.php" class="btn btn-info">Ver Relatórios</a>
                     </div>
-					-->
+                    -->
                 </div>
             </main>
         </div>
@@ -113,7 +113,7 @@ verificaPermissao('admin_panel');
     </div>
     
     <script src="../assets/js/script.js"></script>
-	<script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

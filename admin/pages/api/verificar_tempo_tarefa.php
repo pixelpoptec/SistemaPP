@@ -43,4 +43,3 @@ if ($tempo_gasto > 0) {
 }
 
 echo json_encode($response);
-

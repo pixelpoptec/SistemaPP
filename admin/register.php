@@ -21,52 +21,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = sanitizar($_POST['email']);
         $senha = $_POST['senha'];
         $confirma_senha = $_POST['confirma_senha'];
-        
+
         // Validar email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $erro = 'Email inválido';
         }
         // Verificar se as senhas conferem
-        else if ($senha !== $confirma_senha) {
+        elseif ($senha !== $confirma_senha) {
             $erro = 'As senhas não conferem';
         }
         // Verificar força da senha
-        else if (!verificarForcaSenha($senha)) {
+        elseif (!verificarForcaSenha($senha)) {
             $erro = 'A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas e números';
-        }
-        else {
+        } else {
             global $conn;
-            
+
             // Verificar se o email já existe
             $sql = "SELECT id FROM usuarios WHERE email = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
-            
+
             if ($result->num_rows > 0) {
                 $erro = 'Este email já está cadastrado';
             } else {
                 // Hash da senha
                 $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-                
+
                 // Inserir novo usuário
                 $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sss", $nome, $email, $senha_hash);
-                
+
                 if ($stmt->execute()) {
                     $usuario_id = $stmt->insert_id;
-                    
+
                     // Atribuir ao grupo 'usuario' por padrão
                     $sql = "INSERT INTO usuario_grupo (usuario_id, grupo_id) 
                             SELECT ?, id FROM grupos WHERE nome = 'usuario'";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("i", $usuario_id);
                     $stmt->execute();
-                    
+
                     registrarLog($usuario_id, 'REGISTRO', 'Novo usuário registrado');
-                    
+
                     $sucesso = 'Registro realizado com sucesso! Agora você pode fazer login.';
                 } else {
                     $erro = 'Erro ao registrar usuário: ' . $conn->error;
@@ -88,15 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="register-container">
         <h2>Criar Conta</h2>
         
-        <?php if (!empty($erro)): ?>
+        <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?php echo $erro; ?></div>
         <?php endif; ?>
         
-        <?php if (!empty($sucesso)): ?>
+        <?php if (!empty($sucesso)) : ?>
             <div class="alert alert-success"><?php echo $sucesso; ?></div>
             <p><a href="login.php" class="btn btn-primary">Ir para Login</a></p>
-        <?php else: ?>
-        
+        <?php else : ?>
         <form method="post" action="">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
             

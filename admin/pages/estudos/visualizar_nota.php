@@ -44,9 +44,9 @@ $arquivos = buscarArquivos($conn, $id_seq, $_SESSION['usuario_id']);
         <?php include '../../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -59,10 +59,10 @@ $arquivos = buscarArquivos($conn, $id_seq, $_SESSION['usuario_id']);
                     </ol>
                 </nav>
 
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                     <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?>">
-                        <?php 
-                        echo $_SESSION['mensagem']; 
+                        <?php
+                        echo $_SESSION['mensagem'];
                         unset($_SESSION['mensagem']);
                         unset($_SESSION['tipo_mensagem']);
                         ?>
@@ -93,11 +93,11 @@ $arquivos = buscarArquivos($conn, $id_seq, $_SESSION['usuario_id']);
                         <?php echo renderizarFormatacao(htmlspecialchars($nota['conteudo'])); ?>
                     </div>
 
-                    <?php if (!empty($arquivos)): ?>
+                    <?php if (!empty($arquivos)) : ?>
                         <div class="mt-4">
                             <h4>Arquivos</h4>
                             <ul class="list-group">
-                                <?php foreach ($arquivos as $arquivo): ?>
+                                <?php foreach ($arquivos as $arquivo) : ?>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span><?php echo htmlspecialchars($arquivo['nome']); ?></span>
                                         <div>

@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = 'Erro de segurança. Por favor, tente novamente.';
     } else {
         $acao = $_POST['acao'] ?? '';
-        
+
         // Adicionar tarefa
         if ($acao === 'adicionar') {
             $nome = sanitizar($_POST['nome']);
@@ -31,15 +31,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cliente_id = (int)$_POST['cliente_id'];
             $tempo_horas = isset($_POST['tempo_horas']) ? (int)$_POST['tempo_horas'] : 0;
             $tempo_minutos = isset($_POST['tempo_minutos']) ? (int)$_POST['tempo_minutos'] : 0;
-            
+
             $sql = "INSERT INTO tarefas (nome, detalhes, status, previsao_termino, prioridade, 
                     cliente_id, usuario_id, tempo_horas, tempo_minutos) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssiiii", $nome, $detalhes, $status, $previsao_termino, 
-                            $prioridade, $cliente_id, $_SESSION['usuario_id'], $tempo_horas, $tempo_minutos);
-            
+            $stmt->bind_param(
+                "sssssiiii",
+                $nome,
+                $detalhes,
+                $status,
+                $previsao_termino,
+                $prioridade,
+                $cliente_id,
+                $_SESSION['usuario_id'],
+                $tempo_horas,
+                $tempo_minutos
+            );
+
             if ($stmt->execute()) {
                 $tarefa_id = $stmt->insert_id;
                 registrarLog($_SESSION['usuario_id'], 'TAREFA_ADICIONADA', "Tarefa ID: $tarefa_id adicionada");
@@ -48,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $erro = 'Erro ao adicionar tarefa: ' . $conn->error;
             }
         }
-        
+
         // Editar tarefa
-        else if ($acao === 'editar') {
+        elseif ($acao === 'editar') {
             $tarefa_id = (int)$_POST['tarefa_id'];
             $nome = sanitizar($_POST['nome']);
             $detalhes = sanitizar($_POST['detalhes']);
@@ -60,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cliente_id = (int)$_POST['cliente_id'];
             $tempo_horas = isset($_POST['tempo_horas']) ? (int)$_POST['tempo_horas'] : 0;
             $tempo_minutos = isset($_POST['tempo_minutos']) ? (int)$_POST['tempo_minutos'] : 0;
-            
+
             // Se o status for concluído e não tiver data de término, adicionar data atual
             $termino_set = "";
             if ($status === 'concluido') {
@@ -71,21 +81,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_check->execute();
                 $result_check = $stmt_check->get_result();
                 $tarefa_atual = $result_check->fetch_assoc();
-                
+
                 if ($tarefa_atual['status'] !== 'concluido') {
                     $termino_set = ", termino_efetivo = NOW()";
                 }
             }
-            
+
             $sql = "UPDATE tarefas SET nome = ?, detalhes = ?, status = ?, 
                     previsao_termino = ?, prioridade = ?, cliente_id = ?,
                     tempo_horas = ?, tempo_minutos = ? $termino_set
                     WHERE id = ?";
-            
+
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssiiii", $nome, $detalhes, $status, $previsao_termino, 
-                           $prioridade, $cliente_id, $tempo_horas, $tempo_minutos, $tarefa_id);
-            
+            $stmt->bind_param(
+                "sssssiiii",
+                $nome,
+                $detalhes,
+                $status,
+                $previsao_termino,
+                $prioridade,
+                $cliente_id,
+                $tempo_horas,
+                $tempo_minutos,
+                $tarefa_id
+            );
+
             if ($stmt->execute()) {
                 registrarLog($_SESSION['usuario_id'], 'TAREFA_EDITADA', "Tarefa ID: $tarefa_id editada");
                 $sucesso = 'Tarefa atualizada com sucesso!';
@@ -93,15 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $erro = 'Erro ao atualizar tarefa: ' . $conn->error;
             }
         }
-        
+
         // Excluir tarefa
-        else if ($acao === 'excluir') {
+        elseif ($acao === 'excluir') {
             $tarefa_id = (int)$_POST['tarefa_id'];
-            
+
             $sql = "DELETE FROM tarefas WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $tarefa_id);
-            
+
             if ($stmt->execute()) {
                 registrarLog($_SESSION['usuario_id'], 'TAREFA_EXCLUIDA', "Tarefa ID: $tarefa_id excluída");
                 $sucesso = 'Tarefa excluída com sucesso!';
@@ -109,12 +129,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $erro = 'Erro ao excluir tarefa: ' . $conn->error;
             }
         }
-        
+
         // Atualizar status da tarefa
-        else if ($acao === 'atualizar_status') {
+        elseif ($acao === 'atualizar_status') {
             $tarefa_id = (int)$_POST['tarefa_id'];
             $novo_status = sanitizar($_POST['novo_status']);
-            
+
             // Se o status for concluído, adicionar data de término
             $termino_set = "";
             if ($novo_status === 'concluido') {
@@ -122,11 +142,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $termino_set = ", termino_efetivo = null";
             }
-            
+
             $sql = "UPDATE tarefas SET status = ? $termino_set WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("si", $novo_status, $tarefa_id);
-            
+
             if ($stmt->execute()) {
                 registrarLog($_SESSION['usuario_id'], 'TAREFA_STATUS_ALTERADO', "Tarefa ID: $tarefa_id, Novo status: $novo_status");
                 $sucesso = 'Status da tarefa atualizado com sucesso!';
@@ -150,16 +170,16 @@ $where_clauses = ["1=1"]; // Sempre verdadeiro para iniciar
 //Deve exibir as tarefas que não sejam concluídas
 //Na visualização por tabelas, exibe tudo
 //Jaime Pimenta - 16/06
-if ($modo_visualizacao === 'cards'){
-	if ($filtro_status) {
-		$where_clauses[] = "t.status = '$filtro_status'";
-	} else {
-		$where_clauses[] = "t.status != 'concluido'";
-	}
+if ($modo_visualizacao === 'cards') {
+    if ($filtro_status) {
+        $where_clauses[] = "t.status = '$filtro_status'";
+    } else {
+        $where_clauses[] = "t.status != 'concluido'";
+    }
 } else {
-	if ($filtro_status) {
-		$where_clauses[] = "t.status = '$filtro_status'";
-	}		
+    if ($filtro_status) {
+        $where_clauses[] = "t.status = '$filtro_status'";
+    }
 }
 
 if ($filtro_prioridade) {
@@ -216,26 +236,26 @@ while ($cliente = $result_clientes->fetch_assoc()) {
     <title>Controle de Tarefas - Sistema de Acesso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="../assets/css/style_tarefas.css">
-	<link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style_tarefas.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <!-- Font Awesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">	
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">    
 </head>
 <body>
     <div class="container">
         <?php include '../includes/header.php'; ?>
         
         <div class="content">
-			<?php include '../includes/sidebar_m.php'; ?>
+            <?php include '../includes/sidebar_m.php'; ?>
             
             <main>
                 <h4>Controle de Tarefas</h4>
                 
-                <?php if (!empty($erro)): ?>
+                <?php if (!empty($erro)) : ?>
                     <div class="alert alert-danger"><?php echo $erro; ?></div>
                 <?php endif; ?>
                 
-                <?php if (!empty($sucesso)): ?>
+                <?php if (!empty($sucesso)) : ?>
                     <div class="alert alert-success"><?php echo $sucesso; ?></div>
                 <?php endif; ?>
                 
@@ -244,9 +264,9 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                         <i class="bi bi-plus-circle"></i> Nova Tarefa
                     </button>
 
-					<button class="btn btn-primary" onclick="abrirRastreadorTempo()">
-						<i class="fas fa-clock"></i> Rastrear Tempo
-					</button>					
+                    <button class="btn btn-primary" onclick="abrirRastreadorTempo()">
+                        <i class="fas fa-clock"></i> Rastrear Tempo
+                    </button>                   
                 </div>
                 
                 <div class="panel-section filters">
@@ -277,7 +297,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                             <label for="cliente_id" class="form-label">Cliente</label>
                             <select name="cliente_id" id="cliente_id" class="form-select">
                                 <option value="">Todos</option>
-                                <?php foreach ($clientes as $cliente): ?>
+                                <?php foreach ($clientes as $cliente) : ?>
                                 <option value="<?php echo $cliente['id']; ?>" <?php echo $filtro_cliente === $cliente['id'] ? 'selected' : ''; ?>>
                                     <?php echo $cliente['nome']; ?>
                                 </option>
@@ -300,50 +320,49 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                 <div class="panel-section">
                     <h5>Minhas Tarefas</h5>
                     
-                    <?php if (empty($tarefas)): ?>
+                    <?php if (empty($tarefas)) : ?>
                         <div class="alert alert-info">Nenhuma tarefa encontrada. Adicione uma nova tarefa.</div>
-                    <?php else: ?>
-                        
-                        <?php if ($modo_visualizacao === 'cards'): ?>
+                    <?php else : ?>
+                        <?php if ($modo_visualizacao === 'cards') : ?>
                             <!-- Visualização em Cards -->
                             <div class="row">
-                                <?php foreach ($tarefas as $tarefa): ?>
+                                <?php foreach ($tarefas as $tarefa) : ?>
                                     <?php
                                     $prioridade_class = 'prioridade-' . $tarefa['prioridade'];
                                     $status_class = 'status-' . $tarefa['status'];
                                     $status_text = '';
-                                    
+
                                     switch ($tarefa['status']) {
-                                        case 'aberta': 
+                                        case 'aberta':
                                             $status_text = 'Aberta';
                                             break;
-                                        case 'fazendo': 
+                                        case 'fazendo':
                                             $status_text = 'Fazendo';
                                             break;
-                                        case 'esperando': 
+                                        case 'esperando':
                                             $status_text = 'Esperando';
                                             break;
-                                        case 'concluido': 
+                                        case 'concluido':
                                             $status_text = 'Concluído';
                                             break;
                                     }
-                                    
+
                                     $data_atual = new DateTime();
                                     $data_previsao = new DateTime($tarefa['previsao_termino']);
                                     $vencida = ($data_previsao < $data_atual) && $tarefa['status'] !== 'concluido';
-                                    
+
                                     $prioridade_text = '';
                                     switch ($tarefa['prioridade']) {
-                                        case 'baixa': 
+                                        case 'baixa':
                                             $prioridade_text = 'Baixa';
                                             break;
-                                        case 'media': 
+                                        case 'media':
                                             $prioridade_text = 'Média';
                                             break;
-                                        case 'alta': 
+                                        case 'alta':
                                             $prioridade_text = 'Alta';
                                             break;
-                                        case 'urgente': 
+                                        case 'urgente':
                                             $prioridade_text = 'Urgente';
                                             break;
                                     }
@@ -379,7 +398,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                                     </small>
                                                 </div>
                                                 
-                                                <?php if ($tarefa['termino_efetivo']): ?>
+                                                <?php if ($tarefa['termino_efetivo']) : ?>
                                                 <div class="info-group mb-2">
                                                     <small class="text-muted">Concluída em: <strong><?php echo date('d/m/Y', strtotime($tarefa['termino_efetivo'])); ?></strong></small>
                                                 </div>
@@ -465,8 +484,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                        <?php else: ?>
-
+                        <?php else : ?>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -533,7 +551,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                 <label for="cliente_id" class="form-label">Cliente</label>
                                 <select class="form-select" id="cliente_id" name="cliente_id">
                                     <option value="">Selecione um cliente</option>
-                                    <?php foreach ($clientes as $cliente): ?>
+                                    <?php foreach ($clientes as $cliente) : ?>
                                         <option value="<?php echo $cliente['id']; ?>"><?php echo $cliente['nome']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -619,7 +637,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                                 <label for="editar_cliente_id" class="form-label">Cliente</label>
                                 <select class="form-select" id="editar_cliente_id" name="cliente_id">
                                     <option value="">Selecione um cliente</option>
-                                    <?php foreach ($clientes as $cliente): ?>
+                                    <?php foreach ($clientes as $cliente) : ?>
                                         <option value="<?php echo $cliente['id']; ?>"><?php echo $cliente['nome']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -674,7 +692,7 @@ while ($cliente = $result_clientes->fetch_assoc()) {
     </div>
     
     <script src="../assets/js/script.js"></script>
-	<script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Script para inicializar modais e gerenciar dados
@@ -814,25 +832,25 @@ while ($cliente = $result_clientes->fetch_assoc()) {
                     document.getElementById('excluir_tarefa_nome').textContent = nome;
                 });
             }
-		
+        
         });
-		
-		function abrirRastreadorTempo() {
-			// Define a janela pop-up
-			let popupWidth = 400;
-			let popupHeight = 500;
-			
-			// Centralizar a janela
-			let left = (screen.width - popupWidth) / 2;
-			let top = (screen.height - popupHeight) / 2;
-			
-			// Configurações da janela
-			let config = `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`;
-			config += ',resizable=yes,scrollbars=no,status=no,location=no,menubar=no,toolbar=no';
-			
-			// Abrir a janela
-			window.open('rastreador_tempo.php', 'rastreadorTempo', config);
-		};		
+        
+        function abrirRastreadorTempo() {
+            // Define a janela pop-up
+            let popupWidth = 400;
+            let popupHeight = 500;
+            
+            // Centralizar a janela
+            let left = (screen.width - popupWidth) / 2;
+            let top = (screen.height - popupHeight) / 2;
+            
+            // Configurações da janela
+            let config = `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`;
+            config += ',resizable=yes,scrollbars=no,status=no,location=no,menubar=no,toolbar=no';
+            
+            // Abrir a janela
+            window.open('rastreador_tempo.php', 'rastreadorTempo', config);
+        };      
     </script>
 </body>
 </html>

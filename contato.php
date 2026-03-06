@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $nome = limparDados($_POST["nome"]);
     }
-    
+
     if (empty($_POST["email"])) {
         $erros[] = "Email é obrigatório";
     } else {
@@ -29,31 +29,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $erros[] = "Formato de email inválido";
         }
     }
-    
+
     if (empty($_POST["telefone"])) {
         $erros[] = "telefone é obrigatório";
     } else {
         $telefone = limparDados($_POST["telefone"]);
     }
-    
+
     if (empty($_POST["mensagem"])) {
         $erros[] = "Mensagem é obrigatória";
     } else {
         $mensagem = limparDados($_POST["mensagem"]);
     }
-    
+
     // Se não houver erros, envia o email usando PHPMailer
     if (empty($erros)) {
         // Carrega o PHPMailer
         require 'PHPMailer/src/Exception.php';
         require 'PHPMailer/src/PHPMailer.php';
         require 'PHPMailer/src/SMTP.php';
-       
+
         // Cria uma nova instância do PHPMailer
         $mail = new PHPMailer(true);
-		$mail->SMTPDebug = 2; 
-		$mail->Debugoutput = 'html';
-        
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = 'html';
+
         try {
             // Configurações do servidor
             $mail->isSMTP();                                      // Usar SMTP
@@ -63,17 +63,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Password   = EMAIL_PASS;                      // SMTP password
             $mail->SMTPSecure = 'ssl';   // Habilitar criptografia TLS
             $mail->Port       = EMAIL_PORT;                              // Porta TCP para conexão
-            
+
             // Remetente e destinatário
             $mail->setFrom(EMAIL_USER, 'Formulário de Contato');
-            $mail->addAddress($email, $nome); 
-			$mail->addAddress(EMAIL_USER, $nome);			// Adicionar destinatário
+            $mail->addAddress($email, $nome);
+            $mail->addAddress(EMAIL_USER, $nome);           // Adicionar destinatário
             $mail->addReplyTo($email, $nome);                           // Endereço para resposta
-            
+
             // Conteúdo do email
             $mail->isHTML(true);                                  // Formato do email como HTML
             $mail->Subject = "Contato do site: $telefone";
-            
+
             // Corpo do email
             $corpoEmail = "
             <h2>Nova mensagem do formulário de contato</h2>
@@ -83,16 +83,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p><strong>Mensagem:</strong></p>
             <p>" . nl2br($mensagem) . "</p>
             ";
-            
+
             $mail->Body    = $corpoEmail;
             $mail->AltBody = "Nome: $nome\nEmail: $email\ntelefone: $telefone\nMensagem: $mensagem"; // Para clientes que não suportam HTML
-            
+
             $mail->send();
             $enviado = true;
-            
+
             // Limpa os campos após envio bem-sucedido
             $nome = $email = $telefone = $mensagem = "";
-            
         } catch (Exception $e) {
             $erros[] = "Erro ao enviar mensagem: " . $mail->ErrorInfo;
         }
@@ -100,7 +99,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Função para limpar dados de entrada
-function limparDados($dados) {
+function limparDados($dados)
+{
     $dados = trim($dados);
     $dados = stripslashes($dados);
     $dados = htmlspecialchars($dados);
@@ -190,16 +190,16 @@ function limparDados($dados) {
 <body>
     <h1>Entre em Contato</h1>
     
-    <?php if ($enviado): ?>
+    <?php if ($enviado) : ?>
         <div class="alert alert-success">
             <p>Sua mensagem foi enviada com sucesso! Entraremos em contato em breve.</p>
         </div>
     <?php endif; ?>
     
-    <?php if (!empty($erros)): ?>
+    <?php if (!empty($erros)) : ?>
         <div class="alert alert-error">
             <ul>
-                <?php foreach ($erros as $erro): ?>
+                <?php foreach ($erros as $erro) : ?>
                     <li><?php echo $erro; ?></li>
                 <?php endforeach; ?>
             </ul>

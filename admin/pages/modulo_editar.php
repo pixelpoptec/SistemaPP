@@ -16,7 +16,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $modulo_id = intval($_GET['id']);
 
 // Função para obter detalhes do módulo
-function getModuloDetalhes($conn, $id_seq) {
+function getModuloDetalhes($conn, $id_seq)
+{
     $sql = "SELECT m.*, p.id as projeto_id, p.nome as projeto_nome 
             FROM modulos m
             JOIN projetos p ON m.projeto_id = p.id
@@ -92,7 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Função para obter observações do módulo
-function getObservacoesModulo($conn, $modulo_id) {
+function getObservacoesModulo($conn, $modulo_id)
+{
     $sql = "SELECT om.*, u.nome as usuario_nome 
             FROM observacoes_modulos om
             LEFT JOIN usuarios u ON om.usuario_id = u.id
@@ -190,9 +192,9 @@ $observacoes = getObservacoesModulo($conn, $modulo_id);
         <?php include '../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>
             <?php endif; ?>
 
@@ -209,10 +211,10 @@ $observacoes = getObservacoesModulo($conn, $modulo_id);
                     <p class="mb-0">Módulo: <?php echo htmlspecialchars($modulo['nome']); ?></p>
                 </div>
 
-                <?php if (!empty($erros)): ?>
+                <?php if (!empty($erros)) : ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <ul class="mb-0">
-                        <?php foreach ($erros as $erro): ?>
+                        <?php foreach ($erros as $erro) : ?>
                             <li><?php echo $erro; ?></li>
                         <?php endforeach; ?>
                     </ul>
@@ -281,8 +283,8 @@ $observacoes = getObservacoesModulo($conn, $modulo_id);
                             </div>
 
                             <div class="p-2">
-                                <?php if (count($observacoes) > 0): ?>
-                                    <?php foreach ($observacoes as $obs): ?>
+                                <?php if (count($observacoes) > 0) : ?>
+                                    <?php foreach ($observacoes as $obs) : ?>
                                         <div class="observacao-item">
                                             <p class="mb-1"><?php echo nl2br(htmlspecialchars($obs['observacao'])); ?></p>
                                             <div class="d-flex justify-content-between">
@@ -291,7 +293,7 @@ $observacoes = getObservacoesModulo($conn, $modulo_id);
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
-                                <?php else: ?>
+                                <?php else : ?>
                                     <p class="text-muted">Nenhuma observação registrada.</p>
                                 <?php endif; ?>
 

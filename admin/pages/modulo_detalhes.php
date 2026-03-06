@@ -16,7 +16,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $modulo_id = intval($_GET['id']);
 
 // Função para obter detalhes do módulo
-function getModuloDetalhes($conn, $id_seq) {
+function getModuloDetalhes($conn, $id_seq)
+{
     $sql = "SELECT m.*, p.id as projeto_id, p.nome as projeto_nome 
             FROM modulos m
             JOIN projetos p ON m.projeto_id = p.id
@@ -34,7 +35,8 @@ function getModuloDetalhes($conn, $id_seq) {
 }
 
 // Função para obter telas do módulo
-function getTelasModulo($conn, $modulo_id) {
+function getTelasModulo($conn, $modulo_id)
+{
     $sql = "SELECT * FROM telas WHERE modulo_id = ? ORDER BY nome";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $modulo_id);
@@ -50,7 +52,8 @@ function getTelasModulo($conn, $modulo_id) {
 }
 
 // Função para obter observações do módulo
-function getObservacoesModulo($conn, $modulo_id) {
+function getObservacoesModulo($conn, $modulo_id)
+{
     $sql = "SELECT om.*, u.nome as usuario_nome 
             FROM observacoes_modulos om
             LEFT JOIN usuarios u ON om.usuario_id = u.id
@@ -185,22 +188,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
         <?php include '../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>
             <?php endif; ?>
 
             <main>
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                 <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?> alert-dismissible fade show" role="alert">
                     <?php echo $_SESSION['mensagem']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <?php 
+                    <?php
                     unset($_SESSION['mensagem']);
                     unset($_SESSION['tipo_mensagem']);
-                endif; 
+                endif;
                 ?>
 
                 <div class="module-header">
@@ -216,13 +219,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
                         </div>
                     </div>
                     <div class="mt-2">
-                        <span class="badge bg-<?php 
-                            switch($modulo['status']) {
-                                case 'Pendente': echo 'secondary'; break;
-                                case 'Em desenvolvimento': echo 'primary'; break;
-                                case 'Concluído': echo 'success'; break;
-                                default: echo 'info';
-                            }
+                        <span class="badge bg-<?php
+                        switch ($modulo['status']) {
+                            case 'Pendente':
+                                    echo 'secondary';
+                                break;
+                            case 'Em desenvolvimento':
+                                    echo 'primary';
+                                break;
+                            case 'Concluído':
+                                    echo 'success';
+                                break;
+                            default:
+                                    echo 'info';
+                        }
                         ?>"><?php echo $modulo['status']; ?></span>
                         <span class="ms-3 text-light">Projeto: <?php echo htmlspecialchars($modulo['projeto_nome']); ?></span>
                         <span class="ms-3 text-light">Criado em: <?php echo date('d/m/Y', strtotime($modulo['data_criacao'])); ?></span>
@@ -248,8 +258,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
                                 </a>
                             </div>
                             <div class="section-body">
-                                <?php if (count($telas) > 0): ?>
-                                    <?php foreach ($telas as $tela): ?>
+                                <?php if (count($telas) > 0) : ?>
+                                    <?php foreach ($telas as $tela) : ?>
                                         <div class="tela-card p-3 mb-3">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <h5><?php echo htmlspecialchars($tela['nome']); ?></h5>
@@ -260,7 +270,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
                                                 </div>
                                             </div>
                                             <p class="mb-0"><?php echo mb_strimwidth(htmlspecialchars($tela['descricao']), 0, 100, "..."); ?></p>
-                                            <?php if (!empty($tela['mockup_url'])): ?>
+                                            <?php if (!empty($tela['mockup_url'])) : ?>
                                                 <div class="mt-2">
                                                     <a href="<?php echo htmlspecialchars($tela['mockup_url']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary">
                                                         <i class="bi bi-image"></i> Ver Mockup
@@ -269,7 +279,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
                                             <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
-                                <?php else: ?>
+                                <?php else : ?>
                                     <div class="alert alert-info mb-0">
                                         Nenhuma tela cadastrada para este módulo. 
                                         <a href="tela_cadastro.php?modulo_id=<?php echo $modulo_id; ?>" class="alert-link">Clique aqui</a> para adicionar.
@@ -298,8 +308,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
                                 <hr>
 
                                 <h5>Histórico de Observações</h5>
-                                <?php if (count($observacoes) > 0): ?>
-                                    <?php foreach ($observacoes as $obs): ?>
+                                <?php if (count($observacoes) > 0) : ?>
+                                    <?php foreach ($observacoes as $obs) : ?>
                                         <div class="observacao-item">
                                             <p class="mb-1"><?php echo nl2br(htmlspecialchars($obs['observacao'])); ?></p>
                                             <div class="d-flex justify-content-between">
@@ -308,7 +318,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nova_observacao'])) {
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
-                                <?php else: ?>
+                                <?php else : ?>
                                     <p class="text-muted">Nenhuma observação registrada.</p>
                                 <?php endif; ?>
                             </div>

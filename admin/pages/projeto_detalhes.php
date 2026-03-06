@@ -16,7 +16,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $projeto_id = intval($_GET['id']);
 
 // Função para obter detalhes do projeto
-function getProjetoDetalhes($conn, $id_seq) {
+function getProjetoDetalhes($conn, $id_seq)
+{
     $sql = "SELECT * FROM projetos WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_seq);
@@ -31,7 +32,8 @@ function getProjetoDetalhes($conn, $id_seq) {
 }
 
 // Função para obter módulos do projeto
-function getModulosProjeto($conn, $projeto_id) {
+function getModulosProjeto($conn, $projeto_id)
+{
     $sql = "SELECT m.*, COUNT(t.id) as total_telas 
             FROM modulos m 
             LEFT JOIN telas t ON m.id = t.modulo_id 
@@ -52,7 +54,8 @@ function getModulosProjeto($conn, $projeto_id) {
 }
 
 // Função para obter arquitetura do projeto
-function getArquiteturaProjeto($conn, $projeto_id) {
+function getArquiteturaProjeto($conn, $projeto_id)
+{
     $sql = "SELECT * FROM arquitetura WHERE projeto_id = ? ORDER BY data_criacao DESC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $projeto_id);
@@ -68,7 +71,8 @@ function getArquiteturaProjeto($conn, $projeto_id) {
 }
 
 // Função para obter tabelas do banco de dados do projeto
-function getTabelasBD($conn, $projeto_id) {
+function getTabelasBD($conn, $projeto_id)
+{
     $sql = "SELECT * FROM tabelas_bd WHERE projeto_id = ? ORDER BY nome";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $projeto_id);
@@ -97,7 +101,8 @@ $arquitetura = getArquiteturaProjeto($conn, $projeto_id);
 $tabelas = getTabelasBD($conn, $projeto_id);
 
 // Função para obter observações do projeto
-function getObservacoesProjeto($conn, $projeto_id) {
+function getObservacoesProjeto($conn, $projeto_id)
+{
     $sql = "SELECT op.*, u.nome as usuario_nome 
             FROM observacoes_projetos op
             LEFT JOIN usuarios u ON op.usuario_id = u.id
@@ -228,7 +233,7 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
         .observacao-usuario {
             font-weight: bold;
             color: #c58c6d;
-        }		
+        }       
     </style>
 </head>
 <body>
@@ -236,22 +241,22 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
         <?php include '../includes/header.php'; ?>
 
         <div class="content">
-            <?php if (isMobile()): ?>
+            <?php if (isMobile()) : ?>
                 <?php include '../includes/sidebar_m.php'; ?>
-            <?php else: ?>
+            <?php else : ?>
                 <?php include '../includes/sidebar.php'; ?>
             <?php endif; ?>
 
             <main>
-                <?php if (isset($_SESSION['mensagem'])): ?>
+                <?php if (isset($_SESSION['mensagem'])) : ?>
                 <div class="alert alert-<?php echo $_SESSION['tipo_mensagem']; ?> alert-dismissible fade show" role="alert">
                     <?php echo $_SESSION['mensagem']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <?php 
+                    <?php
                     unset($_SESSION['mensagem']);
                     unset($_SESSION['tipo_mensagem']);
-                endif; 
+                endif;
                 ?>
 
                 <div class="project-header">
@@ -267,15 +272,26 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                         </div>
                     </div>
                     <div class="mt-2">
-                        <span class="badge bg-<?php 
-                            switch($projeto['status']) {
-                                case 'Em planejamento': echo 'secondary'; break;
-                                case 'Em desenvolvimento': echo 'primary'; break;
-                                case 'Em teste': echo 'warning'; break;
-                                case 'Concluído': echo 'success'; break;
-                                case 'Pausado': echo 'danger'; break;
-                                default: echo 'info';
-                            }
+                        <span class="badge bg-<?php
+                        switch ($projeto['status']) {
+                            case 'Em planejamento':
+                                    echo 'secondary';
+                                break;
+                            case 'Em desenvolvimento':
+                                    echo 'primary';
+                                break;
+                            case 'Em teste':
+                                    echo 'warning';
+                                break;
+                            case 'Concluído':
+                                    echo 'success';
+                                break;
+                            case 'Pausado':
+                                    echo 'danger';
+                                break;
+                            default:
+                                    echo 'info';
+                        }
                         ?>"><?php echo $projeto['status']; ?></span>
                         <span class="ms-3 text-light">Criado em: <?php echo date('d/m/Y', strtotime($projeto['data_criacao'])); ?></span>
                         <span class="ms-3 text-light">Última atualização: <?php echo date('d/m/Y H:i', strtotime($projeto['data_atualizacao'])); ?></span>
@@ -303,11 +319,11 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                             <i class="bi bi-table"></i> Tabelas BD
                         </button>
                     </li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="observacoes-tab" data-bs-toggle="tab" data-bs-target="#observacoes" type="button" role="tab" aria-controls="observacoes" aria-selected="false">
-							<i class="bi bi-chat-left-text"></i> Observações
-						</button>
-					</li>					
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="observacoes-tab" data-bs-toggle="tab" data-bs-target="#observacoes" type="button" role="tab" aria-controls="observacoes" aria-selected="false">
+                            <i class="bi bi-chat-left-text"></i> Observações
+                        </button>
+                    </li>                   
                 </ul>
 
                 <div class="tab-content" id="projectTabContent">
@@ -340,18 +356,25 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                             </a>
                         </div>
 
-                        <?php if (count($modulos) > 0): ?>
-                            <?php foreach ($modulos as $modulo): ?>
+                        <?php if (count($modulos) > 0) : ?>
+                            <?php foreach ($modulos as $modulo) : ?>
                                 <div class="module-card p-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h4><?php echo htmlspecialchars($modulo['nome']); ?></h4>
-                                        <span class="badge bg-<?php 
-                                            switch($modulo['status']) {
-                                                case 'Pendente': echo 'secondary'; break;
-                                                case 'Em desenvolvimento': echo 'primary'; break;
-                                                case 'Concluído': echo 'success'; break;
-                                                default: echo 'info';
-                                            }
+                                        <span class="badge bg-<?php
+                                        switch ($modulo['status']) {
+                                            case 'Pendente':
+                                                    echo 'secondary';
+                                                break;
+                                            case 'Em desenvolvimento':
+                                                    echo 'primary';
+                                                break;
+                                            case 'Concluído':
+                                                    echo 'success';
+                                                break;
+                                            default:
+                                                    echo 'info';
+                                        }
                                         ?>"><?php echo $modulo['status']; ?></span>
                                     </div>
                                     <p class="mb-2"><?php echo mb_strimwidth(htmlspecialchars($modulo['descricao']), 0, 150, "..."); ?></p>
@@ -368,7 +391,7 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                                     </div>
                                 </div>
                             <?php endforeach; ?>
-                        <?php else: ?>
+                        <?php else : ?>
                             <div class="alert alert-info">
                                 Nenhum módulo cadastrado para este projeto. 
                                 <a href="modulo_cadastro.php?projeto_id=<?php echo $projeto_id; ?>" class="alert-link">Clique aqui</a> para adicionar um módulo.
@@ -385,9 +408,9 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                             </a>
                         </div>
 
-                        <?php if (count($arquitetura) > 0): ?>
+                        <?php if (count($arquitetura) > 0) : ?>
                             <div class="accordion" id="accordionArquitetura">
-                                <?php foreach ($arquitetura as $index => $arq): ?>
+                                <?php foreach ($arquitetura as $index => $arq) : ?>
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="heading<?php echo $index; ?>">
                                             <button class="accordion-button <?php echo $index > 0 ? 'collapsed' : ''; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>" aria-expanded="<?php echo $index === 0 ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $index; ?>">
@@ -397,7 +420,7 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                                         <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>" aria-labelledby="heading<?php echo $index; ?>" data-bs-parent="#accordionArquitetura">
                                             <div class="accordion-body">
                                                 <p><?php echo nl2br(htmlspecialchars($arq['descricao'])); ?></p>
-                                                <?php if (!empty($arq['diagrama_url'])): ?>
+                                                <?php if (!empty($arq['diagrama_url'])) : ?>
                                                     <div class="text-center my-3">
                                                         <img src="<?php echo htmlspecialchars($arq['diagrama_url']); ?>" alt="Diagrama de Arquitetura" class="img-fluid border rounded">
                                                     </div>
@@ -412,7 +435,7 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                        <?php else: ?>
+                        <?php else : ?>
                             <div class="alert alert-info">
                                 Nenhuma documentação de arquitetura cadastrada para este projeto. 
                                 <a href="arquitetura_cadastro.php?projeto_id=<?php echo $projeto_id; ?>" class="alert-link">Clique aqui</a> para adicionar.
@@ -429,9 +452,9 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                             </a>
                         </div>
 
-                        <?php if (count($tabelas) > 0): ?>
+                        <?php if (count($tabelas) > 0) : ?>
                             <div class="accordion" id="accordionTabelas">
-                                <?php foreach ($tabelas as $index => $tabela): ?>
+                                <?php foreach ($tabelas as $index => $tabela) : ?>
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="headingTabela<?php echo $index; ?>">
                                             <button class="accordion-button <?php echo $index > 0 ? 'collapsed' : ''; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTabela<?php echo $index; ?>" aria-expanded="<?php echo $index === 0 ? 'true' : 'false'; ?>" aria-controls="collapseTabela<?php echo $index; ?>">
@@ -456,64 +479,64 @@ $observacoes = getObservacoesProjeto($conn, $projeto_id);
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                        <?php else: ?>
+                        <?php else : ?>
                             <div class="alert alert-info">
                                 Nenhuma tabela de banco de dados cadastrada para este projeto. 
                                 <a href="tabela_cadastro.php?projeto_id=<?php echo $projeto_id; ?>" class="alert-link">Clique aqui</a> para adicionar.
                             </div>
                         <?php endif; ?>
                     </div>
-					
-					<!-- Aba de Observações -->
-					<div class="tab-pane fade" id="observacoes" role="tabpanel" aria-labelledby="observacoes-tab">
-						<div class="row">
-							<div class="col-lg-6">
-								<div class="section-card">
-									<div class="section-header">
-										<h3 class="mb-0">Adicionar Nova Observação</h3>
-									</div>
-									<div class="section-body">
-										<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $projeto_id); ?>" class="mb-4">
-											<div class="mb-3">
-												<label for="observacao_projeto" class="form-label">Observação</label>
-												<textarea class="form-control" id="observacao_projeto" name="observacao_projeto" rows="4" required></textarea>
-												<div class="form-text">Adicione observações gerais sobre o projeto, como decisões importantes, mudanças de escopo, etc.</div>
-											</div>
-											<div class="d-grid">
-												<button type="submit" name="nova_observacao_projeto" class="btn btn-primary">Adicionar Observação</button>
-											</div>
-										</form>
-									</div>
-								</div>
-							</div>
+                    
+                    <!-- Aba de Observações -->
+                    <div class="tab-pane fade" id="observacoes" role="tabpanel" aria-labelledby="observacoes-tab">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="section-card">
+                                    <div class="section-header">
+                                        <h3 class="mb-0">Adicionar Nova Observação</h3>
+                                    </div>
+                                    <div class="section-body">
+                                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $projeto_id); ?>" class="mb-4">
+                                            <div class="mb-3">
+                                                <label for="observacao_projeto" class="form-label">Observação</label>
+                                                <textarea class="form-control" id="observacao_projeto" name="observacao_projeto" rows="4" required></textarea>
+                                                <div class="form-text">Adicione observações gerais sobre o projeto, como decisões importantes, mudanças de escopo, etc.</div>
+                                            </div>
+                                            <div class="d-grid">
+                                                <button type="submit" name="nova_observacao_projeto" class="btn btn-primary">Adicionar Observação</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="col-lg-6">
-								<div class="section-card">
-									<div class="section-header">
-										<h3 class="mb-0">Histórico de Observações</h3>
-									</div>
-									<div class="section-body" style="max-height: 500px; overflow-y: auto;">
-										<?php if (count($observacoes) > 0): ?>
-											<?php foreach ($observacoes as $obs): ?>
-												<div class="observacao-item">
-													<p class="mb-1"><?php echo nl2br(htmlspecialchars($obs['observacao'])); ?></p>
-													<div class="d-flex justify-content-between">
-														<span class="observacao-usuario"><?php echo htmlspecialchars($obs['usuario_nome'] ?? 'Sistema'); ?></span>
-														<span class="observacao-data"><?php echo date('d/m/Y H:i', strtotime($obs['data_registro'])); ?></span>
-													</div>
-												</div>
-											<?php endforeach; ?>
-										<?php else: ?>
-											<div class="alert alert-info mb-0">
-												Nenhuma observação registrada para este projeto.
-											</div>
-										<?php endif; ?>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>					
+                            <div class="col-lg-6">
+                                <div class="section-card">
+                                    <div class="section-header">
+                                        <h3 class="mb-0">Histórico de Observações</h3>
+                                    </div>
+                                    <div class="section-body" style="max-height: 500px; overflow-y: auto;">
+                                        <?php if (count($observacoes) > 0) : ?>
+                                            <?php foreach ($observacoes as $obs) : ?>
+                                                <div class="observacao-item">
+                                                    <p class="mb-1"><?php echo nl2br(htmlspecialchars($obs['observacao'])); ?></p>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="observacao-usuario"><?php echo htmlspecialchars($obs['usuario_nome'] ?? 'Sistema'); ?></span>
+                                                        <span class="observacao-data"><?php echo date('d/m/Y H:i', strtotime($obs['data_registro'])); ?></span>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else : ?>
+                                            <div class="alert alert-info mb-0">
+                                                Nenhuma observação registrada para este projeto.
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                  
                 </div>
             </main>
         </div>
