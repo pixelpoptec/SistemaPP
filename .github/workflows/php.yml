@@ -52,6 +52,24 @@ jobs:
           -not -path "./vendor/*" \
           | xargs -I {} php -l {}
         echo "Todos os arquivos PHP estão válidos"
+        
+    - name: Instalar PHPMD (PHP Mess Detector)
+      run: composer global require phpmd/phpmd
+
+    - name: Analisar qualidade do código
+      run: |
+        phpmd . text cleancode,codesize,controversial,design,naming,unusedcode \
+          --exclude vendor,PHPMailer \
+          --suffixes php
+
+    - name: Instalar PHP_CodeSniffer
+      run: composer global require squizlabs/php_codesniffer
+
+    - name: Verificar padrão de código (PSR-12)
+      run: |
+        phpcs --standard=PSR12 \
+          --ignore=vendor,PHPMailer \
+          --extensions=php .        
 
     - name: Publicação via SSH para HostGator
       env:
