@@ -154,16 +154,16 @@ function generateQRCode($data) {
 		$conteudo = 'tem classe chillerlan\php-qrcode\QRCode';
 		file_put_contents($arquivo, $conteudo); 			
 		
-        $options = new \chillerlan\QRCode\QROptions([
-            'version'      => 5,
-            'outputType'   => \chillerlan\php-qrcode\QRCode::OUTPUT_IMAGE_PNG,
-            'eccLevel'     => \chillerlan\php-qrcode\QRCode::ECC_L,
-            'scale'        => 10,
-            'imageBase64'  => true,
-        ]);
-        
-        $qrcode = new \chillerlan\php-qrcode\QRCode($options);
-        return $qrcode->render($data);
+		$options = new QROptions([
+			'version'      => 5,
+			'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
+			'eccLevel'     => QRCode::ECC_L,
+			'scale'        => 10,
+			'imageBase64'  => true,
+		]);
+
+		$qrcode = new QRCode($options);
+		return $qrcode->render($data);
     }
     
     // Alternativa usando a biblioteca PHP QR Code (se a chillerlan não estiver disponível)
