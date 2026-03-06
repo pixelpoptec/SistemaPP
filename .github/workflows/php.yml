@@ -1,147 +1,314 @@
 name: PHP Deploy HostGator
 
+# ==============================================================
+#  GATILHO (TRIGGER)
+#  Define quando este workflow será executado automaticamente.
+#  Neste caso, qualquer push na branch "main" inicia o pipeline.
+# ==============================================================
 on:
   push:
     branches: [ "main" ]
 
+# ==============================================================
+#  PERMISSÕES
+#  Define o que o github-actions[bot] pode fazer no repositório.
+#  "write" é necessário para que o PHPCBF possa commitar as
+#  correções automáticas de estilo de volta na branch.
+# ==============================================================
 permissions:
   contents: write
 
+# ==============================================================
+#  JOBS
+#  Um job é um conjunto de steps que rodam no mesmo runner.
+#  Todos os steps abaixo rodam sequencialmente na mesma máquina
+#  virtual Ubuntu — se um step falhar, os seguintes não executam
+#  (exceto o step de e-mail, que tem "if: always()").
+# ==============================================================
 jobs:
   publicacao:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Máquina virtual Ubuntu mais recente
 
     steps:
-    - name: Baixar o código
-      uses: actions/checkout@v4
 
-    - name: Empacotar arquivos para publicação
-      run: |
-        zip -r deploy.zip . \
-          -x ".git/*" \
-          -x ".github/*" \
-          -x ".gitignore" \
-          -x "README.md" \
-          -x "deploy.zip"
+      # --------------------------------------------------------
+      #  STEP 1 — CHECKOUT
+      #  Baixa o código-fonte do repositório para dentro do
+      #  runner (máquina virtual do GitHub Actions).
+      #  Sem este step, os demais não têm acesso aos arquivos.
+      # --------------------------------------------------------
+      - name: Baixar o código
+        uses: actions/checkout@v4
 
-    - name: Instalar sshpass
-      run: sudo apt-get update && sudo apt-get install -y sshpass
-      
-    - name: Backup antes do deploy
-      env:
-        SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
-        SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
-        SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
-        REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
-      run: |
-        sshpass -p "$SSH_PASSWORD" ssh \
-          -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
-            BACKUP_DIR=/home4/jaimeg36/backups
-            mkdir -p \$BACKUP_DIR
-            cd $REMOTE_PATH
-            zip -r \$BACKUP_DIR/backup_\$(date +%Y%m%d_%H%M%S).zip .
-            echo 'Backup criado em ' \$(date)
+      # --------------------------------------------------------
+      #  STEP 2 — EMPACOTAR
+      #  Gera o arquivo deploy.zip com todo o projeto.
+      #  Este zip será enviado ao servidor HostGator mais adiante.
+      #  Os parâmetros "-x" excluem arquivos/pastas que não devem
+      #  ir para produção:
+      #    .git/      → histórico do Git (desnecessário no servidor)
+      #    .github/   → configuração do pipeline (idem)
+      #    .gitignore → regras de versionamento (idem)
+      #    README.md  → documentação (idem)
+      #    deploy.zip → evita incluir o próprio zip dentro do zip
+      # --------------------------------------------------------
+      - name: Empacotar arquivos para publicação
+        run: |
+          zip -r deploy.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x ".gitignore" \
+            -x "README.md" \
+            -x "deploy.zip"
 
-            # Mantém apenas os últimos 5 backups
-            ls -t \$BACKUP_DIR/backup_*.zip | tail -n +6 | xargs rm -f
-          "      
-    - name: Validar sintaxe PHP
-      run: |
-        find . -name "*.php" \
-          -not -path "./.git/*" \
-          -not -path "./vendor/*" \
-          | xargs -I {} php -l {}
-        echo "Todos os arquivos PHP estão válidos"
-        
-    - name: Instalar PHPMD
-      run: |
-        composer global require phpmd/phpmd
-        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+      # --------------------------------------------------------
+      #  STEP 3 — INSTALAR SSHPASS
+      #  O sshpass permite autenticação SSH com senha via linha
+      #  de comando (não-interativo), necessário para conectar
+      #  ao HostGator sem intervenção manual.
+      # --------------------------------------------------------
+      - name: Instalar sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    - name: Analisar qualidade do código
-      run: |
-        phpmd . text cleancode,codesize,design,naming,unusedcode \
-          --exclude vendor,PHPMailer \
-          --suffixes php
+      # --------------------------------------------------------
+      #  STEP 4 — BACKUP ANTES DO DEPLOY
+      #  Antes de sobrescrever qualquer coisa no servidor, cria
+      #  um backup do estado atual da aplicação em produção.
+      #
+      #  O que acontece no servidor remoto:
+      #    1. Cria o diretório ~/backups (se não existir)
+      #    2. Compacta o conteúdo atual da aplicação em um zip
+      #       com timestamp no nome (ex: backup_20240617_143022.zip)
+      #    3. Mantém apenas os 5 backups mais recentes,
+      #       deletando os mais antigos automaticamente
+      #
+      #  As variáveis SSH_HOST, SSH_USER etc. vêm dos Secrets
+      #  configurados em Settings → Secrets and variables → Actions
+      # --------------------------------------------------------
+      - name: Backup antes do deploy
+        env:
+          SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
+          REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh \
+            -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+              BACKUP_DIR=/home4/jaimeg36/backups
+              mkdir -p \$BACKUP_DIR
+              cd $REMOTE_PATH
+              zip -r \$BACKUP_DIR/backup_\$(date +%Y%m%d_%H%M%S).zip .
+              echo 'Backup criado em ' \$(date)
 
-    - name: Instalar PHP_CodeSniffer
-      run: |
-        composer global require squizlabs/php_codesniffer
-        echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
-        
-    - name: Corrigir estilo de código automaticamente
-      run: |
-        phpcbf --standard=PSR12 \
-          --ignore=vendor,PHPMailer \
-          --extensions=php . || true
-        # O "|| true" evita falha porque o phpcbf retorna exit code != 0 
-        # quando faz correções       
+              # Mantém apenas os últimos 5 backups — remove os mais antigos
+              ls -t \$BACKUP_DIR/backup_*.zip | tail -n +6 | xargs rm -f
+            "
 
-    - name: Commitar correções automáticas do PHPCBF
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "actions@github.com"
+      # --------------------------------------------------------
+      #  STEP 5 — VALIDAR SINTAXE PHP
+      #  Percorre todos os arquivos .php do projeto (exceto vendor
+      #  e .git) e executa "php -l" em cada um.
+      #  O "php -l" verifica apenas erros de sintaxe (parse errors)
+      #  — não executa o código.
+      #  Se qualquer arquivo tiver erro de sintaxe, o pipeline
+      #  para aqui e o deploy não acontece.
+      # --------------------------------------------------------
+      - name: Validar sintaxe PHP
+        run: |
+          find . -name "*.php" \
+            -not -path "./.git/*" \
+            -not -path "./vendor/*" \
+            | xargs -I {} php -l {}
+          echo "Todos os arquivos PHP estão válidos"
 
-        # Garante que o deploy.zip nunca seja commitado
-        git rm --cached deploy.zip 2>/dev/null || true
+      # --------------------------------------------------------
+      #  STEP 6 — INSTALAR PHPMD
+      #  PHP Mess Detector: ferramenta de análise estática que
+      #  detecta problemas de qualidade no código ("bad smells"):
+      #    - código complexo demais (codesize)
+      #    - variáveis/métodos não utilizados (unusedcode)
+      #    - nomes ruins de variáveis (naming)
+      #    - problemas de design (design)
+      #    - más práticas gerais (cleancode)
+      # --------------------------------------------------------
+      - name: Instalar PHPMD
+        run: |
+          composer global require phpmd/phpmd
+          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
-        git add -A
+      # --------------------------------------------------------
+      #  STEP 7 — ANALISAR QUALIDADE DO CÓDIGO (PHPMD)
+      #  Executa a análise com os conjuntos de regras definidos.
+      #  Ignora as pastas vendor e PHPMailer (código de terceiros).
+      #  Falhas aqui indicam problemas de qualidade que devem
+      #  ser corrigidos antes do deploy.
+      # --------------------------------------------------------
+      - name: Analisar qualidade do código
+        run: |
+          phpmd . text cleancode,codesize,design,naming,unusedcode \
+            --exclude vendor,PHPMailer \
+            --suffixes php
 
-        if ! git diff --staged --quiet; then
-          git commit -m "style: correções automáticas PHPCBF"
-          git push
-        fi      
+      # --------------------------------------------------------
+      #  STEP 8 — INSTALAR PHP_CODESNIFFER
+      #  Instala duas ferramentas do mesmo pacote:
+      #    PHPCS  → verifica se o código segue o padrão PSR-12
+      #    PHPCBF → corrige automaticamente as violações que puder
+      # --------------------------------------------------------
+      - name: Instalar PHP_CodeSniffer
+        run: |
+          composer global require squizlabs/php_codesniffer
+          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
-    - name: Verificar padrão de código (PSR-12)
-      run: |
-        phpcs --standard=PSR12 \
-          --warning-severity=0 \
-          --ignore=vendor,PHPMailer \
-          --extensions=php \
-          --exclude=Squiz.ControlStructures.ControlSignature \
-          .     
+      # --------------------------------------------------------
+      #  STEP 9 — CORRIGIR ESTILO AUTOMATICAMENTE (PHPCBF)
+      #  O PHPCBF corrige automaticamente violações do PSR-12:
+      #    - Tabs → espaços
+      #    - CRLF → LF
+      #    - Espaços no final de linha
+      #    - Linha em branco após <?php
+      #    - Chave de abertura de funções na linha errada
+      #    - etc.
+      #
+      #  O "|| true" no final é intencional: o PHPCBF retorna
+      #  código de saída 1 quando faz correções (comportamento
+      #  padrão da ferramenta), o que quebraria o pipeline.
+      #  Com "|| true", o step sempre é considerado bem-sucedido.
+      # --------------------------------------------------------
+      - name: Corrigir estilo de código automaticamente
+        run: |
+          phpcbf --standard=PSR12 \
+            --ignore=vendor,PHPMailer \
+            --extensions=php . || true
 
-    - name: Publicação via SSH para HostGator
-      env:
-        SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
-        SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
-        SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
-        REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
-      run: |
-        sshpass -p "$SSH_PASSWORD" scp \
-          -o StrictHostKeyChecking=no \
-          deploy.zip $SSH_USER@$SSH_HOST:/tmp/deploy.zip
+      # --------------------------------------------------------
+      #  STEP 10 — COMMITAR CORREÇÕES DO PHPCBF
+      #  As correções feitas pelo PHPCBF existem apenas na máquina
+      #  virtual do runner. Este step as salva de volta no GitHub,
+      #  mantendo o repositório sempre sincronizado com o que
+      #  vai para produção.
+      #
+      #  Fluxo:
+      #    1. Configura identidade do commit (github-actions[bot])
+      #    2. Remove deploy.zip do índice Git (não deve ser versionado)
+      #    3. Adiciona todos os arquivos modificados pelo PHPCBF
+      #    4. Só commita e faz push se houver mudanças reais
+      #       (evita commits vazios desnecessários)
+      # --------------------------------------------------------
+      - name: Commitar correções automáticas do PHPCBF
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
 
-        sshpass -p "$SSH_PASSWORD" ssh \
-          -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
-            mkdir -p $REMOTE_PATH &&
-            cd $REMOTE_PATH &&
-            unzip -o /tmp/deploy.zip &&
-            rm /tmp/deploy.zip &&
-            echo 'Publicação concluída em ' \$(date)
-          "
+          # Garante que o deploy.zip nunca seja versionado no repositório
+          git rm --cached deploy.zip 2>/dev/null || true
 
-    # Roda sempre, mesmo se o deploy falhar
-    - name: Notificar por e-mail
-      if: always()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: ${{ secrets.MAIL_HOST }}
-        server_port: ${{ secrets.MAIL_PORT }}
-        username: ${{ secrets.MAIL_USER }}
-        password: ${{ secrets.MAIL_PASSWORD }}
-        subject: "[${{ job.status == 'success' && 'SUCESSO' || 'FALHOU' }}] Deploy SistemaPP - ${{ github.ref_name }}"
-        to: ${{ secrets.MAIL_TO }}
-        from: ${{ secrets.MAIL_USER }}
-        body: |
-          Deploy do SistemaPP finalizado com status: ${{ job.status }}
+          git add -A
 
-          Detalhes:
-          - Branch: ${{ github.ref_name }}
-          - Commit: ${{ github.sha }}
-          - Autor: ${{ github.actor }}
-          - Data/Hora: ${{ github.event.head_commit.timestamp }}
-          - Mensagem do commit: ${{ github.event.head_commit.message }}
+          # Commita apenas se o PHPCBF gerou alguma alteração
+          if ! git diff --staged --quiet; then
+            git commit -m "style: correções automáticas PHPCBF"
+            git push
+          fi
 
-          Ver detalhes completos em:
-          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      # --------------------------------------------------------
+      #  STEP 11 — VERIFICAR PADRÃO DE CÓDIGO (PHPCS)
+      #  Após as correções automáticas do PHPCBF, o PHPCS faz
+      #  a verificação final. Se ainda existir alguma violação
+      #  do PSR-12 que o PHPCBF não conseguiu corrigir
+      #  automaticamente, o pipeline falha aqui e o deploy
+      #  não acontece — protegendo produção de código fora do padrão.
+      #
+      #  Parâmetros:
+      #    --warning-severity=0  → ignora warnings, só falha em erros
+      #    --exclude=...         → ignora regra de assinatura de
+      #                            estruturas de controle (compatibilidade)
+      # --------------------------------------------------------
+      - name: Verificar padrão de código (PSR-12)
+        run: |
+          phpcs --standard=PSR12 \
+            --warning-severity=0 \
+            --ignore=vendor,PHPMailer \
+            --extensions=php \
+            --exclude=Squiz.ControlStructures.ControlSignature \
+            .
+
+      # --------------------------------------------------------
+      #  STEP 12 — DEPLOY PARA O HOSTGATOR
+      #  Com todos os checks aprovados, envia o código para o
+      #  servidor de produção em dois sub-passos:
+      #
+      #  SCP → copia o deploy.zip para /tmp no servidor remoto
+      #        (pasta temporária, fora da aplicação)
+      #
+      #  SSH → conecta no servidor e executa remotamente:
+      #         1. Garante que o diretório de destino existe
+      #         2. Entra no diretório da aplicação
+      #         3. Descompacta o zip (sobrescreve arquivos existentes)
+      #         4. Remove o zip temporário de /tmp
+      #         5. Exibe data/hora da conclusão no log
+      # --------------------------------------------------------
+      - name: Publicação via SSH para HostGator
+        env:
+          SSH_HOST: ${{ secrets.HOSTGATOR_SSH_HOST }}
+          SSH_USER: ${{ secrets.HOSTGATOR_SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.HOSTGATOR_SSH_PASSWORD }}
+          REMOTE_PATH: ${{ secrets.HOSTGATOR_REMOTE_PATH }}
+        run: |
+          # Envia o zip para a pasta temporária do servidor
+          sshpass -p "$SSH_PASSWORD" scp \
+            -o StrictHostKeyChecking=no \
+            deploy.zip $SSH_USER@$SSH_HOST:/tmp/deploy.zip
+
+          # Conecta via SSH e executa o deploy no servidor
+          sshpass -p "$SSH_PASSWORD" ssh \
+            -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+              mkdir -p $REMOTE_PATH &&
+              cd $REMOTE_PATH &&
+              unzip -o /tmp/deploy.zip &&
+              rm /tmp/deploy.zip &&
+              echo 'Publicação concluída em ' \$(date)
+            "
+
+      # --------------------------------------------------------
+      #  STEP 13 — NOTIFICAÇÃO POR E-MAIL
+      #  Envia um e-mail com o resultado do pipeline.
+      #
+      #  "if: always()" garante que este step SEMPRE executa,
+      #  mesmo que qualquer step anterior tenha falhado —
+      #  assim você recebe notificação tanto de sucesso
+      #  quanto de falha.
+      #
+      #  O subject muda dinamicamente:
+      #    ✅ [SUCESSO] Deploy SistemaPP - main
+      #    ❌ [FALHOU]  Deploy SistemaPP - main
+      #
+      #  O corpo do e-mail inclui:
+      #    - Status final do job
+      #    - Branch e hash do commit
+      #    - Autor e mensagem do commit
+      #    - Link direto para o log do pipeline no GitHub
+      # --------------------------------------------------------
+      - name: Notificar por e-mail
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_HOST }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USER }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[${{ job.status == 'success' && 'SUCESSO' || 'FALHOU' }}] Deploy SistemaPP - ${{ github.ref_name }}"
+          to: ${{ secrets.MAIL_TO }}
+          from: ${{ secrets.MAIL_USER }}
+          body: |
+            Deploy do SistemaPP finalizado com status: ${{ job.status }}
+
+            Detalhes:
+            - Branch:            ${{ github.ref_name }}
+            - Commit:            ${{ github.sha }}
+            - Autor:             ${{ github.actor }}
+            - Data/Hora:         ${{ github.event.head_commit.timestamp }}
+            - Mensagem do commit: ${{ github.event.head_commit.message }}
+
+            Ver detalhes completos em:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
