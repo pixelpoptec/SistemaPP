@@ -19,17 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $email = sanitizar($_POST['email']);
         $senha = $_POST['senha'];
-        
+
         $resultado = fazerLogin($email, $senha);
-        
+
         if ($resultado['status']) {
-			if (isMobile()) {
-				header('Location: index_m.php');
-				exit;
-			} else {
-				header('Location: index.php');
-			}				
-            
+            if (isMobile()) {
+                header('Location: index_m.php');
+                exit;
+            } else {
+                header('Location: index.php');
+            }
+
             exit();
         } else {
             $erro = $resultado['mensagem'];
@@ -49,15 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-container">
         <h2 class="gradiente">Login - v1.42</h2>
         
-        <?php if (!empty($erro)): ?>
+        <?php if (!empty($erro)) : ?>
             <div class="alert alert-danger"><?php echo $erro; ?></div>
         <?php endif; ?>
         
-        <?php if (isset($_GET['erro']) && $_GET['erro'] === 'login_necessario'): ?>
+        <?php if (isset($_GET['erro']) && $_GET['erro'] === 'login_necessario') : ?>
             <div class="alert alert-warning">Você precisa fazer login para acessar esta página.</div>
         <?php endif; ?>
         
-        <?php if (isset($_GET['logout']) && $_GET['logout'] === 'success'): ?>
+        <?php if (isset($_GET['logout']) && $_GET['logout'] === 'success') : ?>
             <div class="alert alert-success">Logout realizado com sucesso!</div>
         <?php endif; ?>
         
@@ -80,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!--<p>Não tem uma conta? <a href="register.php">Registre-se</a></p>-->
     </div>
     
-	<img src="https://pixelpop.com.br/pp-files/admin/img/horcri-olivia-circulo-trans.png" alt="Logo da Empresa" class="header-principal">
-	
+    <img src="https://pixelpop.com.br/pp-files/admin/img/horcri-olivia-circulo-trans.png" alt="Logo da Empresa" class="header-principal">
+    
     <script src="assets/js/script.js"></script>
 </body>
 </html>
