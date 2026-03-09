@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!--<p>Não tem uma conta? <a href="register.php">Registre-se</a></p>-->
     </div>
     
-    <img src="https://pixelpop.com.br/pp-files/admin/img/horcri-olivia-circulo-trans.png" alt="Logo da Empresa" class="header-principal">
+    <img src="https://pixelpop.com.br/pp-files/admin/img/horcri-olivia-circulo.png" alt="Logo da Empresa" class="header-principal">
     
     <script src="assets/js/script.js"></script>
 </body>
