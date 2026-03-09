@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="login-container">
-        <h2 class="gradiente">Login - v1.41</h2>
+        <h2 class="gradiente">Login - v1.42</h2>
         
         <?php if (!empty($erro)): ?>
             <div class="alert alert-danger"><?php echo $erro; ?></div>
